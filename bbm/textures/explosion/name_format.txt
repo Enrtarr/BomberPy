@@ -1,0 +1,8 @@
+m                       1                               1
+^                       ^                               ^
+direction du sprite     numéro de frame du sprite       position dans l'axe du sprite
+(m=milieu,              (1=première frame,              (1=première sprite en partant du centre,
+d=droite,               2,=deuxième frame,              2=deuxième sprite en partant du centre)
+g=gauche,               etc...)
+h=haut,
+b=bas)
