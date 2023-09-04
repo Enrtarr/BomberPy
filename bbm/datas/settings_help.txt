@@ -1,0 +1,3 @@
+taille du texte
+volume principal
+placeholder
