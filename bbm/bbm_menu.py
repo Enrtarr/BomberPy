@@ -5,6 +5,7 @@ import ursina as urs
 
 # import datamanager
 import splashscreen
+import inputs
 
 
 app = urs.Ursina(development_mode=True)
@@ -31,32 +32,6 @@ class MenuButton(urs.Button):
         for key, value in kwargs.items():
             setattr(self, key ,value)
 
-
-# class InputChoice(InputField):
-#         def __init__(self, default_v, key, **kwargs):
-#             super().__init__(default_v, key, **kwargs)
-            
-#             # self.parent = input_menu
-            
-#             self.limit_content_to = 'abcdefghijklmnopqrstuvwxyz'
-#             self.default_value = default_v
-#             self.key = key
-            
-#             # self.submit_button = Button(
-#             #     'Appliquer', 
-#             #     on_click=self.submit, 
-#             #     x=self.x-.26,
-#             #     scale=(.25, .075), 
-#             #     highlight_color=color.red,
-#             #     parent=self
-#             #     )
-#             # self.submit_button.fit_to_text()
-
-#             for key, value in kwargs.items():
-#                 setattr(self, key ,value)
-        
-#         def submit(self):
-#             settings_file["Inputs"][self.key] = self.text
 
 # button_size = (.25, .075)
 button_spacing = .075 * 1.25

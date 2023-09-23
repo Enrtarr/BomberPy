@@ -3,8 +3,8 @@ import json
 
 import ursina as urs
 
-
-app = urs.Ursina()
+if __name__ == '__main__':
+    app = urs.Ursina()
 
 with open('./datas/keys_keyboard.json', 'r') as liseur:
     keys_file = json.load(liseur)
@@ -95,4 +95,5 @@ def update():
     print(atk2.key)
 
 
-app.run()
+if __name__ == '__main__':
+    app.run()
