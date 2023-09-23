@@ -5,7 +5,7 @@ import ursina as urs
 
 import splashscreen
 import loadingmenu
-import levelbuilder
+# import levelbuilder
 
 
 titre="AA Games Bomberman"

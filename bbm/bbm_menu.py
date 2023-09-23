@@ -6,8 +6,8 @@ import ursina as urs
 # import datamanager
 import splashscreen
 
-app = urs.Ursina(development_mode=True)
 
+app = urs.Ursina(development_mode=True)
 
 urs.application.paused = True
 SC_duration = 4
