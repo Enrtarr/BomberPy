@@ -33,7 +33,10 @@ class InputChoiceDialogue(urs.Entity):
                 urs.Space(-.5),
                 urs.Text(self.key),
             ),
-            lock = urs.Vec3(1,1,1)
+            lock = urs.Vec3(1,1,1),
+            parent = self,
+            x = .15,
+            y = self.y - .075,
             )
         
         self.cacher()
@@ -77,6 +80,9 @@ class InputChoiceButton(urs.Button):
         
         self.highlight_scale = 1.1
         self.pressed_scale = 0.8
+        
+        self.parent = ICD
+        self.x = -.35
         
         self.on_click = urs.Sequence(
            urs.Func(ICD.montrer),

@@ -15,8 +15,11 @@ if __name__ == '__main__':
 # app = Ursina(title=titre,development_mode=False)
 
 input_mode = 'Clavier'
-atk_key = 'x'
-pause_key = 'p'
+keys = {
+    "atk_key" : 'x',
+    "pause_key" : 'p',
+}
+
 # application.paused = True
 # SC_duration = 4
 # SplashScreen(overlay_color=color.white,logo_texture='./textures/logo_aa.png',delay_time=SC_duration,audio='./audio/Tetris.mp3',audio_volume=1)
@@ -36,7 +39,7 @@ def pause_handler_input(key):
             urs.application.paused = not urs.application.paused
             pause_text.enabled = urs.application.paused
     else:
-        if key == pause_key:
+        if key == keys['pause_key']:
             urs.application.paused = not urs.application.paused
             pause_text.enabled = urs.application.paused
 pause_handler.input = pause_handler_input
@@ -103,7 +106,7 @@ class Player(urs.Entity):
 
     def input(self, key):
         # if key == Keys.gamepad_x:
-        if key == 'x' and not self.bombed:
+        if key == keys['atk_key'] and not self.bombed:
             self.bombed = True
             bombe=Bomb(x=round(self.x),y=round(self.y),longueur=3)
             urs.invoke(bombe.explode, delay=3)

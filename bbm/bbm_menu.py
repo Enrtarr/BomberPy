@@ -84,8 +84,8 @@ preview_text = urs.Text(parent=option_menu, x=.275, y=.25, text='Texte d\'exempl
 # for t in [e for e in scene.entities if isinstance(e, Text)]:
 #     t.original_scale = t.scale
     
-options = []
-inputs = []
+options_e = []
+inputs_e = []
 
 
 text_scale_value = settings_file["TextSize"]
@@ -107,7 +107,7 @@ text_scale_slider.on_value_changed = set_text_scale
 # appelle la fonction afin de mettre le texte à la bonne taille
 set_text_scale()
 
-options.append(text_scale_slider)
+options_e.append(text_scale_slider)
 
 
 audio_volume_value = settings_file["Volume"]
@@ -117,7 +117,7 @@ def set_volume_multiplier():
     urs.Audio.volume_multiplier = volume_slider.value
 volume_slider.on_value_changed = set_volume_multiplier
 
-options.append(volume_slider)
+options_e.append(volume_slider)
 
 
 def set_input_mode():
@@ -138,10 +138,10 @@ input_mode_button = urs.Button(
     )
 input_mode_text = urs.Text(parent=option_menu, text="Mode d'entrée", origin=(0,0), x=-.125, color=urs.color.white)
 
-options.append(input_mode_button)
+options_e.append(input_mode_button)
 
 input_menu_button = MenuButton(parent=option_menu, text='Commandes', on_click=urs.Func(setattr, state_handler, 'state', 'input_menu'))
-options.append(input_menu_button)
+options_e.append(input_menu_button)
 
 atk_key = settings_file["Inputs"]["atk"]
 pause_key = settings_file["Inputs"]["pause"]
@@ -177,7 +177,7 @@ options_back = MenuButton(
     origin_x=-.5, 
     on_click=urs.Func(setattr, state_handler, 'state', 'main_menu')
     )
-options.append(options_back)
+options_e.append(options_back)
 
 
 input_back = MenuButton(
@@ -187,32 +187,27 @@ input_back = MenuButton(
     origin_x=-.5, 
     on_click=urs.Func(setattr, state_handler, 'state', 'option_menu')
     )
-inputs.append(input_back)
-
-# input_atk_button = InputChoice(default_v=settings_file["Inputs"]["atk"], key="atk", parent=input_menu)
-# inputs_panel = WindowPanel(
-#     title='Contrôles',
-#     content=(
-#         Text('Pause :'),
-#         InputField(default_value=settings_file["Inputs"]["pause"], limit_content_to='abcdefghijklmnopqrstuvwxyz'),
-#         Text('Attaque :'), 
-#         InputField(default_value=settings_file["Inputs"]["atk"], limit_content_to='abcdefghijklmnopqrstuvwxyz'),
-#         ),
-#     parent=input_menu,
-#     lock=Vec3(1,1,1),
-#     )
-# inputs.append(input_atk_button)
-# inputs.append(inputs_panel)
+inputs_e.append(input_back)
 
 
-for i, e in enumerate(options):
+i_atk_dial = inputs.InputChoiceDialogue(input_menu, "Attaque", "x")
+i_atk_show = inputs.InputChoiceButton(i_atk_dial, "Attaque")
+# inputs_e.append(i_atk_dial)
+inputs_e.append(i_atk_show)
+
+i_atk_dial = inputs.InputChoiceDialogue(input_menu, "Pause", "p")
+i_atk_show = inputs.InputChoiceButton(i_atk_dial, "Pause")
+# inputs_e.append(i_atk_dial)
+inputs_e.append(i_atk_show)
+
+for i, e in enumerate(options_e):
     e.y = -i * button_spacing
 apply_button.y = options_back.y
 input_mode_text.y = input_mode_button.y
 
-for i, e in enumerate(inputs):
+for i, e in enumerate(inputs_e):
     e.y = -i * button_spacing
-    print(e)
+    print(i, e)
 
 
 for t in [e for e in urs.scene.entities if isinstance(e, urs.Text)]:
