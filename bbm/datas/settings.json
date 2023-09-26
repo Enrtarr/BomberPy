@@ -3,7 +3,7 @@
     "Volume": 1.0,
     "InputMode": "Clavier",
     "Inputs": {
-        "atk": "x",
+        "atk": "space",
         "pause": "p"
     }
 }

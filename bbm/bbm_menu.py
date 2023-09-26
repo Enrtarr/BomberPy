@@ -65,6 +65,7 @@ def start_game():
     menu_parent.enabled = False
     import bbm
     bbm.input_mode = input_mode
+    bbm.keys = temp_keys
     # bbm.atk_key = 
 
 # charge le contenu du menu jouer
@@ -143,18 +144,27 @@ options_e.append(input_mode_button)
 input_menu_button = MenuButton(parent=option_menu, text='Commandes', on_click=urs.Func(setattr, state_handler, 'state', 'input_menu'))
 options_e.append(input_menu_button)
 
-atk_key = settings_file["Inputs"]["atk"]
-pause_key = settings_file["Inputs"]["pause"]
+
+temp_keys = {
+    "atk_key" : settings_file["Inputs"]["atk"],
+    "pause_key" : settings_file["Inputs"]["pause"],
+}
 
 def apply():
+    global input_mode, temp_keys
+    
     settings_file["TextSize"] = round(text_scale_slider.value, 1)
     settings_file["Volume"] = round(volume_slider.value, 1)
     settings_file["InputMode"] = input_mode_button.text
     
+    temp_keys['atk_key'] = i_atk_dial.key
+    settings_file["Inputs"]["atk"] = i_atk_dial.key
+    temp_keys['pause_key'] = i_pause_dial.key
+    settings_file["Inputs"]["pause"] = i_pause_dial.key
+    
     # settings_file["Inputs"]["pause"] = inputs_panel.content[1].text[0]
     # settings_file["Inputs"]["atk"] = inputs_panel.content[3].text[0]
     
-    global input_mode, atk_key, pause_key
     input_mode = input_mode_button.text
     # atk_key = inputs_panel.content[1].text[0]
     # pause_key = inputs_panel.content[3].text[0]
@@ -190,15 +200,15 @@ input_back = MenuButton(
 inputs_e.append(input_back)
 
 
-i_atk_dial = inputs.InputChoiceDialogue(input_menu, "Attaque", "x")
+i_atk_dial = inputs.InputChoiceDialogue(input_menu, "Attaque", temp_keys['atk_key'])
 i_atk_show = inputs.InputChoiceButton(i_atk_dial, "Attaque")
 # inputs_e.append(i_atk_dial)
 inputs_e.append(i_atk_show)
 
-i_atk_dial = inputs.InputChoiceDialogue(input_menu, "Pause", "p")
-i_atk_show = inputs.InputChoiceButton(i_atk_dial, "Pause")
+i_pause_dial = inputs.InputChoiceDialogue(input_menu, "Pause", temp_keys['pause_key'])
+i_pause_show = inputs.InputChoiceButton(i_pause_dial, "Pause")
 # inputs_e.append(i_atk_dial)
-inputs_e.append(i_atk_show)
+inputs_e.append(i_pause_show)
 
 for i, e in enumerate(options_e):
     e.y = -i * button_spacing
