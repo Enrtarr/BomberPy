@@ -5,11 +5,11 @@ import ursina as urs
 
 import splashscreen
 import loadingmenu
-# import levelbuilder
 import bombe
+import map
 
 
-titre="AA Games Bomberman"
+titre="Ultra-Bomberman"
 # app = Ursina(title=titre)
 if __name__ == '__main__':
     app = urs.Ursina(title=titre)
@@ -140,92 +140,10 @@ murs_incassables = urs.Entity(model='quad', texture='./textures/vide', parent=ca
 murs_cassables = urs.Entity(model='quad', texture='./textures/vide', parent=carte)
 bombes = urs.Entity(model='quad', texture='./textures/vide')
 
-class UnWall(urs.Entity):
-    def __init__(self, **kwargs): 
-        super().__init__()     
-
-        self.model = 'quad'
-        self.collider = 'box'
-        self.parent = murs_incassables
-        self.texture='./textures/UnWall'
-        
-        for key, value in kwargs.items(): 
-            setattr(self, key, value)
-
-class BrWall(urs.Entity):
-    def __init__(self, **kwargs): 
-        super().__init__()     
-
-        self.model = 'quad'
-        self.collider = 'box'
-        self.parent = murs_cassables
-        self.texture='./textures/BrWall'
-        
-        for key, value in kwargs.items(): 
-            setattr(self, key, value)
-
-def scan_texture(texture):
-    scanned_tex = []
-    
-    for y in range(texture.height):
-        scanned_tex.append([])
-        for x in range(texture.width):
-            scanned_tex[y].append(0)
-            col = texture.get_pixel(x,y)
-            # If it's black, it's solid, so we'll place a tile there.
-            if col == urs.color.black:
-                scanned_tex[y][x] = 1
-            elif col == urs.color.brown:
-                scanned_tex[y][x] = 2
-            # si c'est vert, on y pace les joueurs chacun leurs tours
-            elif col == urs.color.green:
-                scanned_tex[y][x] = 3
-    return scanned_tex
-
-print(scan_texture(urs.load_texture('./textures/map2')))
-map1 = scan_texture(urs.load_texture('./textures/map2'))
-
-def place_level(texture_list:list, plr_list:list):
-    # destroy every child of the level parent.
-    [urs.destroy(c) for c in murs_incassables.children]
-    
-    width = len(texture_list[0])
-    height = len(texture_list)
-    urs.camera.position = (width/2, height/2)
-    urs.camera.fov = width * 4
-    
-    plr_i = 0
-    for y in range(height):
-        for x in range(width):
-            block = texture_list[y][x]
-            # If it's black, it's solid, so we'll place a tile there.
-            if block == 1:
-                UnWall(position=(x,y))
-            elif block == 2:
-                BrWall(position=(x,y))
-            # si c'est un 3, on y place les joueurs chacun leurs tours
-            elif block == 3:
-                try:
-                    plr_list[plr_i].start_position = (x, y)
-                    if plr_list[plr_i].position != plr_list[plr_i].start_position:
-                        plr_list[plr_i].position = plr_list[plr_i].start_position
-                    plr_i += 1
-                except IndexError:
-                    print('Not enough players to spwan a new one')
-
-
-# lvl_b = levelbuilder.LevelBuilder(
-#     map_image=load_texture('./textures/map1'),
-#     plr_list=joueurs,
-#     map_e=carte,
-#     un_walls=murs_incassables,
-#     br_walls=murs_cassables,
-#     )
-# lvl_b.make_level()
+map1 = map.scan_texture(urs.load_texture('./textures/map2'))
 
 # la première fois qu'une bombe explose, elle provoque un lag-spike, on en fait donc exploser une à l'avance dehors de l'écran
 bombe_lag=bombe.Bomb(murs_incassables,murs_cassables,bombes,position=(-100,-100)) ; urs.invoke(bombe_lag.explode, delay=0) ; urs.destroy(bombe_lag, delay=0)
-
 
 # invoke(setattr, entity, 'var_name', value, delay=1.1)
 # explo_tex = glob.glob('./textures/explosion/*.png')
@@ -240,7 +158,7 @@ joueurs.append(player1)
 # player2 = Player(name='P2')
 # joueurs.append(player2)
 
-place_level(map1, joueurs)
+map.place_level(map1, joueurs, murs_incassables, murs_cassables)
 
 # EditorCamera()
 urs.window.color = urs.color.light_gray
