@@ -6,7 +6,7 @@ import ursina as urs
 import splashscreen
 import loadingmenu
 import bombe
-import map
+import bbm.mapnlevel as mapnlevel
 
 
 titre="Ultra-Bomberman"
@@ -119,8 +119,8 @@ class Player(urs.Entity):
             #     self.bombed = False
     
     def update(self):
-        self.direction = urs.Vec2(urs.held_keys['d'] - urs.held_keys['a'], urs.held_keys['w'] - urs.held_keys['s']).normalized()
-        # self.direction = Vec2(held_keys[Keys.gamepad_left_stick_x], held_keys[Keys.gamepad_left_stick_y]).normalized()
+        # self.direction = urs.Vec2(urs.held_keys['d'] - urs.held_keys['a'], urs.held_keys['w'] - urs.held_keys['s']).normalized()
+        self.direction = urs.Vec2(urs.held_keys[urs.Keys.gamepad_left_stick_x], urs.held_keys[urs.Keys.gamepad_left_stick_y]).normalized()
         if not self.stunned:
             hit_map = urs.raycast(self.position , self.direction, traverse_target=carte, distance=.5, debug=False)
             if not hit_map:
@@ -132,7 +132,7 @@ class Player(urs.Entity):
             # invoke(setattr, self, 'stunned', False, delay=2)
             self.stunned = False
             print('aïe')
-            
+
 
 joueurs = []
 carte = urs.Entity(model='quad', texture='./textures/vide')
@@ -140,16 +140,12 @@ murs_incassables = urs.Entity(model='quad', texture='./textures/vide', parent=ca
 murs_cassables = urs.Entity(model='quad', texture='./textures/vide', parent=carte)
 bombes = urs.Entity(model='quad', texture='./textures/vide')
 
-map1 = map.scan_texture(urs.load_texture('./textures/map2'))
+map1 = mapnlevel.scan_texture(urs.load_texture('./textures/map2'))
 
 # la première fois qu'une bombe explose, elle provoque un lag-spike, on en fait donc exploser une à l'avance dehors de l'écran
 bombe_lag=bombe.Bomb(murs_incassables,murs_cassables,bombes,position=(-100,-100)) ; urs.invoke(bombe_lag.explode, delay=0) ; urs.destroy(bombe_lag, delay=0)
 
-# invoke(setattr, entity, 'var_name', value, delay=1.1)
-# explo_tex = glob.glob('./textures/explosion/*.png')
-# for i in explo_tex:
-#     load_texture(i)
-    # print(f'Loaded texture {i}', end='. ')
+
 urs.EditorCamera()
 
 player1 = Player(name='P1')
@@ -158,7 +154,7 @@ joueurs.append(player1)
 # player2 = Player(name='P2')
 # joueurs.append(player2)
 
-map.place_level(map1, joueurs, murs_incassables, murs_cassables)
+mapnlevel.place_level(map1, joueurs, murs_incassables, murs_cassables)
 
 # EditorCamera()
 urs.window.color = urs.color.light_gray
