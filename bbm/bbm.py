@@ -107,7 +107,7 @@ class Player(urs.Entity):
 
     def input(self, key):
         # if key == Keys.gamepad_x:
-        if key == keys['atk_key'] and not self.bombed:
+        if key == keys['atk_key']:
             self.bombed = True
             # bombe = Bomb(x=round(self.x),y=round(self.y),longueur=3)
             bombe_p = bombe.Bomb(murs_incassables,murs_cassables,bombes,x=round(self.x),y=round(self.y),longueur=3)

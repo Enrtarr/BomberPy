@@ -71,7 +71,7 @@ class Bomb(urs.Entity):
         # on supprime les bombes (cause du bug, à modifier)
         for i in urs.scene.entities:
             if type(i) == urs.SpriteSheetAnimation:
-                if 'flash' in i.animations:
+                if 'flash' in i.animations and (i.parent == self):
                     i.disable()
     
     # fonction pour chaque branche de l'explosion
@@ -96,7 +96,6 @@ class Bomb(urs.Entity):
                 new_sprite.y += y_offset*(i+1)
                 new_sprite.texture = self.__tex_folder+cote+'12'
                 new_sprite.name = 'bout'
-                print(cote)
                 urs.destroy(hit_BrWall.entity)
                 break
             # si aucun mur :
