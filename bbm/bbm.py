@@ -6,7 +6,7 @@ import ursina as urs
 import splashscreen
 import loadingmenu
 import bombe
-import bbm.mapnlevel as mapnlevel
+import mapnlevel as mapnlevel
 
 
 titre="Ultra-Bomberman"
@@ -119,8 +119,8 @@ class Player(urs.Entity):
             #     self.bombed = False
     
     def update(self):
-        # self.direction = urs.Vec2(urs.held_keys['d'] - urs.held_keys['a'], urs.held_keys['w'] - urs.held_keys['s']).normalized()
-        self.direction = urs.Vec2(urs.held_keys[urs.Keys.gamepad_left_stick_x], urs.held_keys[urs.Keys.gamepad_left_stick_y]).normalized()
+        self.direction = urs.Vec2(urs.held_keys['d'] - urs.held_keys['a'], urs.held_keys['w'] - urs.held_keys['s']).normalized()
+        # self.direction = urs.Vec2(urs.held_keys[urs.Keys.gamepad_left_stick_x], urs.held_keys[urs.Keys.gamepad_left_stick_y]).normalized()
         if not self.stunned:
             hit_map = urs.raycast(self.position , self.direction, traverse_target=carte, distance=.5, debug=False)
             if not hit_map:
