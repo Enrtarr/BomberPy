@@ -17,33 +17,23 @@ if __name__ == '__main__':
 
 input_mode = 'Clavier'
 keys = {
-    "atk_key" : 'x',
-    "pause_key" : 'p',
+    "atk_key" : 'space',
+    "pause_key" : 'escape',
 }
 
-# application.paused = True
-# SC_duration = 4
-# SplashScreen(overlay_color=color.white,logo_texture='./textures/logo_aa.png',delay_time=SC_duration,audio='./audio/Tetris.mp3',audio_volume=1)
-# invoke(setattr, application, 'paused', False, delay=1.2*SC_duration)
 
-
-# explo_tex = glob.glob('./textures/explosion/*.png')
-# barre = LoadingBar(texture_to_load=explo_tex)
-# invoke(barre.start, delay=1.2*SC_duration)
-
-
-pause_handler = urs.Entity(ignore_paused=True)
-pause_text = urs.Text('PAUSED', origin=(0,0), scale=2, enabled=False)
-def pause_handler_input(key):
-    if input_mode == 'Manette':
-        if key == urs.Keys.gamepad_start:
-            urs.application.paused = not urs.application.paused
-            pause_text.enabled = urs.application.paused
-    else:
-        if key == keys['pause_key']:
-            urs.application.paused = not urs.application.paused
-            pause_text.enabled = urs.application.paused
-pause_handler.input = pause_handler_input
+# pause_handler = urs.Entity(ignore_paused=True)
+# pause_text = urs.Text('PAUSED', origin=(0,0), scale=2, enabled=False)
+# def pause_handler_input(key):
+#     if input_mode == 'Manette':
+#         if key == urs.Keys.gamepad_start:
+#             urs.application.paused = not urs.application.paused
+#             pause_text.enabled = urs.application.paused
+#     else:
+#         if key == keys['pause_key']:
+#             urs.application.paused = not urs.application.paused
+#             pause_text.enabled = urs.application.paused
+# pause_handler.input = pause_handler_input
 
 
 # print(camel_to_snake('CamelToSnake'))
@@ -57,10 +47,19 @@ pause_handler.input = pause_handler_input
 
 
 class Player(urs.Entity): 
-    def __init__(self, **kwargs): 
+    def __init__(self, **kwargs):
+        """Initialisation du joueur et des attributs
+            - scale_y : la déformation verticale du joueur
+            - rotation_x : permet de faire en sorte que le joueur fasse face à la caméra
+            - always_on_top : permet de faire en sorte que le joueur soit toujours au premier plan
+            - collider : la hitbox du joueur
+            - speed : la vitesse de déplacement du joueur (multiplicatif)
+            - stunned : contient si le joueur est étourdi ou non
+            - bombed : contient si le joueur a déjà une bombe placée
+            - __anims : les animations du joueur"""
         super().__init__() 
         # self.model = 'quad'
-        self.scale_y = 2 
+        self.scale_y = 2
         self.rotation_x = -90
         # self.texture = '/textures/vide'
         self.always_on_top = True
@@ -89,6 +88,11 @@ class Player(urs.Entity):
             setattr(self, key, value) 
         
     def __animer(self, direction: urs.Vec2 = urs.Vec2(0,0)):
+        """Animations du joueur
+        Le principe est le suivant :
+            - selon que l'on avance ou pas :
+                └> si l'animation est en pause, alors ça veut dire qu'elle ne se joue pas.
+                    └> donc ça veut dire qu'on peut lancer une nouvelle animation."""
         if direction.x > 0:
             if self.__anims.animations['walk_right'].paused:
                 self.__anims.play_animation('walk_right')
@@ -106,6 +110,7 @@ class Player(urs.Entity):
                 self.__anims.play_animation('idle')
 
     def input(self, key):
+        """Entrées du clavier pour le joueur"""
         # if key == Keys.gamepad_x:
         if key == keys['atk_key']:
             self.bombed = True
@@ -119,6 +124,10 @@ class Player(urs.Entity):
             #     self.bombed = False
     
     def update(self):
+        """Actualisation des divers attributs du joueur
+            1. On met à jour la direction (vecteur)
+            2. On met à jour la position en fonction de la direction
+            3. On met à jour l'étourdissement"""
         self.direction = urs.Vec2(urs.held_keys['d'] - urs.held_keys['a'], urs.held_keys['w'] - urs.held_keys['s']).normalized()
         # self.direction = urs.Vec2(urs.held_keys[urs.Keys.gamepad_left_stick_x], urs.held_keys[urs.Keys.gamepad_left_stick_y]).normalized()
         if not self.stunned:

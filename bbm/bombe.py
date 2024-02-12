@@ -6,10 +6,18 @@ if __name__ == '__main__':
 
 class Bomb(urs.Entity):
     def __init__(self, murs_incassables, murs_cassables, bombes, **kwargs): 
-        super().__init__()     
+        super().__init__()
+        """Initialisation de la bombe et de ses attributs
+            - rotation_x : permet de faire en sorte que la bombe fasse face à la caméra
+            - scale : la déformation de la bombe
+            - __tex_folder : le dossier contenant les textures de la bombe (et de l'explosion)
+            - longueur : la longeur des branches de la bombe
+            - murs_incassables : une entité utilisée pour le raycasting des branches
+            - murs_cassables : une entité utilisée pour le raycasting des branches
+            - bombes : une entité utilisée pour une organisation plus propre des branches
+            - __anims : les animations de la bombe
+            """
 
-        # self.model="quad"
-        # self.texture="./textures/vide"
         self.rotation_x = -90
         self.scale=1
         self.__tex_folder = './textures/explosion/'

@@ -4,6 +4,6 @@
     "InputMode": "Clavier",
     "Inputs": {
         "atk": "space",
-        "pause": "p"
+        "pause": "escape"
     }
 }
