@@ -14,10 +14,9 @@ class PowerUp(urs.Entity):
         super().__init__()
         """Initialisation du power-up et de ses attributs
             - rotation_x : permet de faire en sorte que la bombe fasse face à la caméra
-            - scale : la déformation de la bombe
-            - texture : le dossier contenant les textures de la bombe (et de l'explosion)
+            - scale : la déformation du power-up
             - type : le type de power-up (ex: fire, roller, etc...)
-            - __anims : les animations de la bombe
+            - __anims : les animations du power-up
             """
 
         self.rotation_x = -90
@@ -54,6 +53,7 @@ class PowerUp(urs.Entity):
     
     def recuperer(self):
         self.rotation_x = 90
+        self.z = -5
         # print(self.__anims.animations)
         # for i in self.__anims.animations:
         #     self.__anims.animations[i].finish()
@@ -68,6 +68,47 @@ class PowerUp(urs.Entity):
             'bombup': 'max_bomb',
         }
         return stats[self.type]
+
+class PwupSpawner(urs.Entity):
+    def __init__(self, **kwargs): 
+        super().__init__()
+
+        self.model='quad'
+        self.texture='./textures/vide'
+        
+        self.t = 0
+        
+        for key, value in kwargs.items(): 
+            setattr(self, key, value)
+    
+    def apparaitre(self):
+        self.t += 1
+        print(self.t)
+        new_pwup = PowerUp(type='fire',power_ups=self)
+    
+    def input(self,key):
+        if key=='b':
+            self.demarrer()
+        elif key=='n':
+            self.arreter()
+    
+    def demarrer(self):
+        self.sequence = urs.Sequence(
+            urs.Func(self.apparaitre),
+            urs.Wait(.1),
+            loop=True
+            )
+        self.sequence.start()
+    
+    def arreter(self):
+        self.sequence.kill()
+    
+    # def update(self):
+    #     self.t += urs.time.dt
+    #     if self.t > .5:  # do every half second
+    #         self.t = 0
+    #         print('sus')
+
 
 if __name__ == '__main__':
     app.run()

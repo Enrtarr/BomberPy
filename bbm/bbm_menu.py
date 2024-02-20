@@ -4,22 +4,22 @@ import json
 import ursina as urs
 
 # import datamanager
-import splashscreen
+# import splashscreen
 import inputs
 
 
 app = urs.Ursina(development_mode=True)
 
-urs.application.paused = True
-SC_duration = 4
-splashscreen.SplashScreen(
-    overlay_color=urs.color.white,
-    logo_texture='./textures/logo_aa.png',
-    delay_time=SC_duration,
-    audio='./audio/crazy_frog.mp3',
-    audio_volume=1
-    )
-urs.invoke(setattr, urs.application, 'paused', False, delay=1.2*SC_duration)
+# urs.application.paused = True
+# SC_duration = 4
+# splashscreen.SplashScreen(
+#     overlay_color=urs.color.white,
+#     logo_texture='./textures/logo_aa.png',
+#     delay_time=SC_duration,
+#     audio='./audio/crazy_frog.mp3',
+#     audio_volume=1
+#     )
+# urs.invoke(setattr, urs.application, 'paused', False, delay=1.2*SC_duration)
 
 
 with open('./datas/settings.json', 'r') as liseur:

@@ -167,6 +167,7 @@ carte = urs.Entity(model='quad', texture='./textures/vide')
 murs_incassables = urs.Entity(model='quad', texture='./textures/vide', parent=carte)
 murs_cassables = urs.Entity(model='quad', texture='./textures/vide', parent=carte)
 bombes = urs.Entity(model='quad', texture='./textures/vide')
+# power_ups = pwup.PwupSpawner()
 power_ups = urs.Entity(model='quad', texture='./textures/vide')
 
 map1 = mapnlevel.scan_texture(urs.load_texture('./textures/map3'))
@@ -200,6 +201,7 @@ test_pwup_bombup4 = pwup.PowerUp(type='bombup',power_ups=power_ups,x=-3,y=10)
 test_pwup_bombup5 = pwup.PowerUp(type='bombup',power_ups=power_ups,x=-3,y=11)
 
 mapnlevel.place_level(map1, joueurs, murs_incassables, murs_cassables)
+mapnlevel.place_bonus(texture_list=map1,nbr_pwup=10,power_ups=power_ups)
 
 # EditorCamera()
 urs.window.color = urs.color.light_gray

@@ -1,4 +1,6 @@
+import random
 import ursina as urs
+import pwup
 
 if __name__ == '__main__':
     app = urs.Ursina()
@@ -73,6 +75,20 @@ def place_level(texture_list:list, plr_list:list, murs_incassables:urs.Entity, m
                     plr_i += 1
                 except IndexError:
                     print('Not enough players to spwan a new one')
+
+def place_bonus(texture_list:list, nbr_pwup:int, power_ups:urs.Entity):
+    width = len(texture_list[0])
+    height = len(texture_list)
+    pwup_i = 0
+    while pwup_i != nbr_pwup:
+        y = random.randint(0,height-1)
+        x = random.randint(0,width-1)
+        block = texture_list[y][x]
+        # If it's black, it's solid, so we'll place a tile there.
+        if block == 2:
+            pwup.PowerUp(type='fire',power_ups=power_ups,y=y,x=x)
+            pwup_i += 1
+            print('place')
 
 if __name__ == '__main__':
     app.run()
