@@ -169,7 +169,7 @@ murs_cassables = urs.Entity(model='quad', texture='./textures/vide', parent=cart
 bombes = urs.Entity(model='quad', texture='./textures/vide')
 power_ups = urs.Entity(model='quad', texture='./textures/vide')
 
-map1 = mapnlevel.scan_texture(urs.load_texture('./textures/map1'))
+map1 = mapnlevel.scan_texture(urs.load_texture('./textures/map3'))
 
 # la première fois qu'une bombe explose, elle provoque un lag-spike, on en fait donc exploser une à l'avance dehors de l'écran
 bombe_lag=bombe.Bomb(murs_incassables,murs_cassables,bombes,position=(-100,-100)) ; urs.invoke(bombe_lag.explode, delay=0) # ; urs.destroy(bombe_lag, delay=0)

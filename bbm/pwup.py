@@ -23,7 +23,7 @@ class PowerUp(urs.Entity):
         self.rotation_x = -90
         # self.model = 'plane'
         self.parent = power_ups
-        self.scale = 1
+        self.scale = .8
         self.type = type
         self.collider = 'box'
         self.collected = False
@@ -38,12 +38,12 @@ class PowerUp(urs.Entity):
         self.__anims = urs.SpriteSheetAnimation(
             texture=f'./textures/pwup_sheet.png',
             tileset_size=(10,5),
-            fps=30,
+            fps=12,
             model='plane',
             animations={
-                'fire':((0,4),(5,4)),
-                'roller':((0,3),(5,3)),
-                'bombup':((0,2),(5,2)),
+                'fire':((6,4),(8,4)),
+                'roller':((6,3),(8,3)),
+                'bombup':((6,2),(8,2)),
             }
         )
         self.__anims.parent = self
