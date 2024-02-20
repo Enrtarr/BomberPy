@@ -7,6 +7,7 @@ import splashscreen
 import loadingmenu
 import bombe
 import mapnlevel as mapnlevel
+import pwup
 
 
 titre="Ultra-Bomberman"
@@ -64,9 +65,13 @@ class Player(urs.Entity):
         # self.texture = '/textures/vide'
         self.always_on_top = True
         self.collider = 'box'
+        
         self.speed = 2
+        self.bomb_size = 3
+        self.max_bomb = 1
+        self.bombed = 1
+        
         self.stunned = False
-        self.bombed = False
         self.__anims = urs.SpriteSheetAnimation(
             texture='/textures/new_bbm_sheet3.png',
             tileset_size=(18,5),
@@ -108,20 +113,22 @@ class Player(urs.Entity):
         elif direction.x == 0 and direction.y == 0:
             if self.__anims.animations['idle'].paused:
                 self.__anims.play_animation('idle')
+            
+    def __unbomb(self):
+        self.bombed -= 1
 
     def input(self, key):
         """Entrées du clavier pour le joueur"""
         # if key == Keys.gamepad_x:
         if key == keys['atk_key']:
-            self.bombed = True
-            # bombe = Bomb(x=round(self.x),y=round(self.y),longueur=3)
-            bombe_p = bombe.Bomb(murs_incassables,murs_cassables,bombes,x=round(self.x),y=round(self.y),longueur=3)
-            urs.invoke(bombe_p.explode, delay=3)
-            urs.invoke(urs.destroy, bombe_p, delay=3)
-            urs.invoke(setattr, self, 'bombed', False, delay=3)
-            # @after(3)
-            # def unbomb():
-            #     self.bombed = False
+            if self.bombed < self.max_bomb + 1:
+                self.bombed += 1
+                bombe_p = bombe.Bomb(murs_incassables,murs_cassables,bombes,x=round(self.x),y=round(self.y),longueur=self.bomb_size)
+                urs.invoke(bombe_p.explode, delay=3)
+                urs.invoke(self.__unbomb, delay=3)
+                # @after(3)
+                # def unbomb():
+                #     self.bombed = False
     
     def update(self):
         """Actualisation des divers attributs du joueur
@@ -135,6 +142,18 @@ class Player(urs.Entity):
             if not hit_map:
                 self.position += self.direction * urs.time.dt * self.speed
             self.__animer(self.direction)
+            hit_pwup = urs.raycast(self.position , self.direction, traverse_target=power_ups, distance=.5, debug=False)
+            if hit_pwup:
+                if not hit_pwup.entity.collected :
+                    hit_pwup.entity.collected = True
+                    stat = hit_pwup.entity.stat_change()
+                    if stat == 'speed':
+                        self.speed += 1
+                    elif stat == 'bomb_size':
+                        self.bomb_size += 1
+                    elif stat == 'max_bomb':
+                        self.max_bomb += 1
+                    hit_pwup.entity.recuperer()
         if self.intersects(bombes).hit:
             self.stunned = True
         elif self.stunned:
@@ -148,11 +167,12 @@ carte = urs.Entity(model='quad', texture='./textures/vide')
 murs_incassables = urs.Entity(model='quad', texture='./textures/vide', parent=carte)
 murs_cassables = urs.Entity(model='quad', texture='./textures/vide', parent=carte)
 bombes = urs.Entity(model='quad', texture='./textures/vide')
+power_ups = urs.Entity(model='quad', texture='./textures/vide')
 
-map1 = mapnlevel.scan_texture(urs.load_texture('./textures/map2'))
+map1 = mapnlevel.scan_texture(urs.load_texture('./textures/map1'))
 
 # la première fois qu'une bombe explose, elle provoque un lag-spike, on en fait donc exploser une à l'avance dehors de l'écran
-bombe_lag=bombe.Bomb(murs_incassables,murs_cassables,bombes,position=(-100,-100)) ; urs.invoke(bombe_lag.explode, delay=0) ; urs.destroy(bombe_lag, delay=0)
+bombe_lag=bombe.Bomb(murs_incassables,murs_cassables,bombes,position=(-100,-100)) ; urs.invoke(bombe_lag.explode, delay=0) # ; urs.destroy(bombe_lag, delay=0)
 
 
 urs.EditorCamera()
@@ -162,6 +182,22 @@ joueurs.append(player1)
 
 # player2 = Player(name='P2')
 # joueurs.append(player2)
+
+test_pwup_feu1 = pwup.PowerUp(type='fire',power_ups=power_ups,x=-1,y=1)
+test_pwup_feu2 = pwup.PowerUp(type='fire',power_ups=power_ups,x=-1,y=2)
+test_pwup_feu3 = pwup.PowerUp(type='fire',power_ups=power_ups,x=-1,y=3)
+test_pwup_feu4 = pwup.PowerUp(type='fire',power_ups=power_ups,x=-1,y=4)
+test_pwup_feu5 = pwup.PowerUp(type='fire',power_ups=power_ups,x=-1,y=5)
+test_pwup_rolleur1 = pwup.PowerUp(type='roller',power_ups=power_ups,x=-3,y=1)
+test_pwup_rolleur2 = pwup.PowerUp(type='roller',power_ups=power_ups,x=-3,y=2)
+test_pwup_rolleur3 = pwup.PowerUp(type='roller',power_ups=power_ups,x=-3,y=3)
+test_pwup_rolleur4 = pwup.PowerUp(type='roller',power_ups=power_ups,x=-3,y=4)
+test_pwup_rolleur5 = pwup.PowerUp(type='roller',power_ups=power_ups,x=-3,y=5)
+test_pwup_bombup1 = pwup.PowerUp(type='bombup',power_ups=power_ups,x=-3,y=7)
+test_pwup_bombup2 = pwup.PowerUp(type='bombup',power_ups=power_ups,x=-3,y=8)
+test_pwup_bombup3 = pwup.PowerUp(type='bombup',power_ups=power_ups,x=-3,y=9)
+test_pwup_bombup4 = pwup.PowerUp(type='bombup',power_ups=power_ups,x=-3,y=10)
+test_pwup_bombup5 = pwup.PowerUp(type='bombup',power_ups=power_ups,x=-3,y=11)
 
 mapnlevel.place_level(map1, joueurs, murs_incassables, murs_cassables)
 
@@ -174,3 +210,4 @@ urs.window.exit_button.visible = False
 if __name__ == '__main__':
     app.run()
 
+# 5.3.0
