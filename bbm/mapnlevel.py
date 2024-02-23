@@ -86,9 +86,9 @@ def place_bonus(texture_list:list, nbr_pwup:int, power_ups:urs.Entity):
         block = texture_list[y][x]
         # If it's black, it's solid, so we'll place a tile there.
         if block == 2:
-            pwup.PowerUp(type='fire',power_ups=power_ups,y=y,x=x)
+            lst_pwup = ['fire','roller','bombup']
+            pwup.PowerUp(type=lst_pwup[random.randint(0,len(lst_pwup)-1)],power_ups=power_ups,y=y,x=x)
             pwup_i += 1
-            print('place')
 
 if __name__ == '__main__':
     app.run()
