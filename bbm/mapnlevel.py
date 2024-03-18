@@ -30,7 +30,103 @@ class BrWall(urs.Entity):
         for key, value in kwargs.items(): 
             setattr(self, key, value)
 
+class BlocSol(urs.Entity):
+    def __init__(self, murs_deco:urs.Entity, nom:str, **kwargs): 
+        super().__init__()     
+
+        self.model = 'quad'
+        self.collider = 'box'
+        self.z = .001
+        self.parent = murs_deco
+        self.texture= f'./textures/deco_{nom}'
+        
+        for key, value in kwargs.items(): 
+            setattr(self, key, value)
+
+class Goal(urs.Entity):
+    def __init__(self, murs_buts:urs.Entity, **kwargs): 
+        super().__init__()     
+
+        self.model = 'quad'
+        self.collider = 'box'
+        self.parent = murs_buts
+        self.texture='./textures/goal'
+        
+        for key, value in kwargs.items(): 
+            setattr(self, key, value)
+
+# class Ball(urs.Entity):
+#     def __init__(self, balles:urs.Entity, buts:urs.Entity, carte:urs.Entity, **kwargs): 
+#         super().__init__()     
+
+#         self.model = 'quad'
+#         self.collider = 'box'
+#         self.scale = .6
+#         self.parent = balles
+#         self.buts = buts
+#         self.carte = carte
+#         self.texture='./textures/Ball2'
+        
+#         self.x_velocity = 0 ; self.y_velocity = 0
+#         self.old_x = self.x ; self.old_y = self.y
+        
+#         for key, value in kwargs.items(): 
+#             setattr(self, key, value)
+    
+#     def reset(self):
+#         self.x = 8
+#         self.y = 6
+     
+#     def update(self):
+#         self.old_x = self.x
+#         self.old_y = self.y
+        
+#         hit_posiX = urs.raycast(self.position, (1,0), traverse_target=self.carte, distance=abs(self.x_velocity/10), debug=False)
+#         hit_negaX = urs.raycast(self.position, (-1,0), traverse_target=self.carte, distance=abs(self.x_velocity/10), debug=False)
+#         if not hit_posiX and not hit_negaX:
+#             self.x += self.x_velocity / 10
+#         hit_posiY = urs.raycast(self.position, (0,1), traverse_target=self.carte, distance=abs(self.y_velocity/10), debug=False)
+#         hit_negaY = urs.raycast(self.position, (0,-1), traverse_target=self.carte, distance=abs(self.y_velocity/10), debug=False)
+#         if not hit_posiY and not hit_negaY:
+#             self.y += self.y_velocity / 10
+        
+#         if hit_posiX:
+#             self.x_velocity = - self.x_velocity
+#             self.x = self.old_x
+#             self.x -= .1
+#         elif hit_negaX:
+#             self.x_velocity = - self.x_velocity
+#             self.x = self.old_x
+#             self.x += .1
+#         if hit_posiY:
+#             self.y_velocity = - self.y_velocity
+#             self.y = self.old_y
+#             self.y -= .1
+#         elif hit_negaY:
+#             self.y_velocity = - self.y_velocity
+#             self.y = self.old_y
+#             self.y += .1
+        
+#         if self.x_velocity > 0:
+#             self.x_velocity = round(self.x_velocity - .1, 1)
+#         elif self.x_velocity < 0:
+#             self.x_velocity = round(self.x_velocity + .1, 1)
+#         if self.y_velocity > 0:
+#             self.y_velocity = round(self.y_velocity - .1, 1)
+#         elif self.y_velocity < 0:
+#             self.y_velocity = round(self.y_velocity + .1, 1)
+        
+#         if self.intersects(self.buts).hit:
+#             urs.invoke(self.reset, delay=1)
+#             self.x_velocity = 0
+#             self.y_velocity = 0
+#             print('+1')
+
+
 def scan_texture(texture):
+    """converstion nombre couleur:
+        0-Blanc, 1-Noir, 2-Brun, 3-VertClair, 4-VertFonce, 5-Rose
+    """
     scanned_tex = []
     
     for y in range(texture.height):
@@ -38,36 +134,59 @@ def scan_texture(texture):
         for x in range(texture.width):
             scanned_tex[y].append(0)
             col = texture.get_pixel(x,y)
-            # If it's black, it's solid, so we'll place a tile there.
-            if col == urs.color.black:
+            if col == urs.color.rgb(255,255,255):
+                scanned_tex[y][x] = 0
+            # si c'est noir, on y place un mur incassable
+            elif col == urs.color.rgb(0,0,0):
                 scanned_tex[y][x] = 1
-            elif col == urs.color.brown:
+            elif col == urs.color.rgb(165,42,42):
                 scanned_tex[y][x] = 2
-            # si c'est vert, on y pace les joueurs chacun leurs tours
-            elif col == urs.color.green:
+            # si c'est vert, on y place les joueurs chacun leur tour
+            elif col == urs.color.rgb(0,255,0):
                 scanned_tex[y][x] = 3
+            elif col == urs.color.rgb(0,128,0):
+                scanned_tex[y][x] = 4
+            elif col == urs.color.rgb(255,0,255):
+                scanned_tex[y][x] = 5
+            # elif col == urs.color.rgb():
+            #     scanned_tex[y][x] = 6
     return scanned_tex
 
-def place_level(texture_list:list, plr_list:list, murs_incassables:urs.Entity, murs_cassables:urs.Entity):
+def place_level(texture_list:list, murs_incassables:urs.Entity, murs_cassables:urs.Entity, murs_deco:urs.Entity, murs_buts:urs.Entity):
     # destroy every child of the level parent.
     [urs.destroy(c) for c in murs_incassables.children]
+    [urs.destroy(c) for c in murs_cassables.children]
+    [urs.destroy(c) for c in murs_deco.children]
     
     width = len(texture_list[0])
     height = len(texture_list)
     urs.camera.position = (width/2, height/2)
     urs.camera.fov = width * 4
     
-    plr_i = 0
     for y in range(height):
         for x in range(width):
             block = texture_list[y][x]
-            # If it's black, it's solid, so we'll place a tile there.
             if block == 1:
                 UnWall(murs_incassables, position=(x,y))
             elif block == 2:
                 BrWall(murs_cassables, position=(x,y))
-            # si c'est un 3, on y place les joueurs chacun leurs tours
-            elif block == 3:
+            elif block == 4:
+                BlocSol(murs_deco,'grass', position=(x,y))
+            elif block == 5:
+                Goal(murs_buts, position=(x,y))
+            
+
+def place_player(texture_list:list, plr_list:list):
+    
+    width = len(texture_list[0])
+    height = len(texture_list)
+    
+    plr_i = 0
+    for y in range(height):
+        for x in range(width):
+            block = texture_list[y][x]
+            # On  place les joueurs chacun leurs tours
+            if block == 3:
                 try:
                     plr_list[plr_i].start_position = (x, y)
                     if plr_list[plr_i].position != plr_list[plr_i].start_position:

@@ -8,9 +8,31 @@ import loadingmenu
 import bombe
 import mapnlevel as mapnlevel
 import pwup
+import ball
 
+print("""
+      ⠀⠀⠀⠀⣠⣤⣤⣤⣤⣤⣶⣦⣤⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀ 
+⠀⠀⠀⠀⠀⠀⠀⠀⢀⣴⣿⡿⠛⠉⠙⠛⠛⠛⠛⠻⢿⣷⣤⡀⠀⠀⠀⠀⠀ 
+⠀⠀⠀⠀⠀⠀⠀⠀⣼⣿⠋⠀⠀⠀⠀⠀⠀⠀⢀⣀⣀⠈⢻⣿⣿⡄⠀⠀⠀⠀ 
+⠀⠀⠀⠀⠀⠀⠀⣸⣿⡏⠀⠀⠀⣠⣶⣾⣿⣿⣿⠿⠿⠿⢿⣿⣿⣿⣄⠀⠀⠀ 
+⠀⠀⠀⠀⠀⠀⠀⣿⣿⠁⠀⠀⢰⣿⣿⣯⠁⠀⠀⠀⠀⠀⠀⠀⠈⠙⢿⣷⡄⠀ 
+⠀⠀⣀⣤⣴⣶⣶⣿⡟⠀⠀⠀⢸⣿⣿⣿⣆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣷⠀ 
+⠀⢰⣿⡟⠋⠉⣹⣿⡇⠀⠀⠀⠘⣿⣿⣿⣿⣷⣦⣤⣤⣤⣶⣶⣶⣶⣿⣿
+⠀⢸⣿⡇⠀⠀⣿⣿⡇⠀⠀⠀⠀⠹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿
+⠀⣸⣿⡇⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠉⠻⠿⣿⣿⣿⣿⡿⠿⠿⠛⢻⣿⠃⠀⠀ 
+⠀⣿⣿⠁⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣧⠀⠀ 
+⠀⣿⣿⠀⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⠀⠀ 
+⠀⣿⣿⠀⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⠀⠀ 
+⠀⢿⣿⡆⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⡇⠀⠀ 
+⠀⠸⣿⣧⡀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⠃⠀⠀ 
+⠀⠀⠛⢿⣿⣿⣿⣿⣇⠀⠀⠀⠀⠀⣰⣿⣿⣷⣶⣶⣶⣶⠶⢠⣿⣿⠀⠀⠀ 
+⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⠀⠀⣿⣿⡇⠀⣽⣿⡏⠁⠀⠀⢸⣿⡇⠀⠀⠀ 
+⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⠀⠀⣿⣿⡇⠀⢹⣿⡆⠀⠀⠀⣸⣿⠇⠀⠀⠀ 
+⠀⠀⠀⠀⠀⠀⠀⢿⣿⣦⣄⣀⣠⣴⣿⣿⠁⠀⠈⠻⣿⣿⣿⡿⠏⠀⠀⠀⠀ 
+⠀⠀⠀⠀⠀⠀⠀⠈⠛⠻⠿⠿⠿⠿⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+""")
 
-titre="Ultra-Bomberman"
+titre="Ultra-Bomberman: The Movie: The Game MMXXIV: Remastered, Deluxe Definitive Gold Edition by AA Games"
 # app = Ursina(title=titre)
 if __name__ == '__main__':
     app = urs.Ursina(title=titre)
@@ -68,7 +90,7 @@ class Player(urs.Entity):
         
         self.speed = 2
         self.bomb_size = 3
-        self.max_bomb = 1
+        self.max_bomb = 3
         self.bombed = 1
         
         self.stunned = False
@@ -123,7 +145,7 @@ class Player(urs.Entity):
         if key == keys['atk_key']:
             if self.bombed < self.max_bomb + 1:
                 self.bombed += 1
-                bombe_p = bombe.Bomb(murs_incassables,murs_cassables,bombes,x=round(self.x),y=round(self.y),longueur=self.bomb_size)
+                bombe_p = bombe.Bomb(murs_incassables,murs_cassables,bombes,balles,x=round(self.x),y=round(self.y),longueur=self.bomb_size)
                 urs.invoke(bombe_p.explode, delay=3)
                 urs.invoke(self.__unbomb, delay=3)
                 # @after(3)
@@ -166,14 +188,18 @@ joueurs = []
 carte = urs.Entity(model='quad', texture='./textures/vide')
 murs_incassables = urs.Entity(model='quad', texture='./textures/vide', parent=carte)
 murs_cassables = urs.Entity(model='quad', texture='./textures/vide', parent=carte)
+murs_deco = urs.Entity(model='quad', texture='./textures/vide')
+murs_buts = urs.Entity(model='quad', texture='./textures/vide')
+balles = urs.Entity(model='quad', texture='./textures/vide')
 bombes = urs.Entity(model='quad', texture='./textures/vide')
 # power_ups = pwup.PwupSpawner()
 power_ups = urs.Entity(model='quad', texture='./textures/vide')
 
-map1 = mapnlevel.scan_texture(urs.load_texture('./textures/map3'))
+map1 = mapnlevel.scan_texture(urs.load_texture('./textures/map7'))
+print(map1)
 
 # la première fois qu'une bombe explose, elle provoque un lag-spike, on en fait donc exploser une à l'avance dehors de l'écran
-bombe_lag=bombe.Bomb(murs_incassables,murs_cassables,bombes,position=(-100,-100)) ; urs.invoke(bombe_lag.explode, delay=0) # ; urs.destroy(bombe_lag, delay=0)
+bombe_lag=bombe.Bomb(murs_incassables,murs_cassables,bombes,balles,position=(-100,-100)) ; urs.invoke(bombe_lag.explode, delay=0) # ; urs.destroy(bombe_lag, delay=0)
 
 
 urs.EditorCamera()
@@ -184,24 +210,28 @@ joueurs.append(player1)
 # player2 = Player(name='P2')
 # joueurs.append(player2)
 
-test_pwup_feu1 = pwup.PowerUp(type='fire',power_ups=power_ups,x=-1,y=1)
-test_pwup_feu2 = pwup.PowerUp(type='fire',power_ups=power_ups,x=-1,y=2)
-test_pwup_feu3 = pwup.PowerUp(type='fire',power_ups=power_ups,x=-1,y=3)
-test_pwup_feu4 = pwup.PowerUp(type='fire',power_ups=power_ups,x=-1,y=4)
-test_pwup_feu5 = pwup.PowerUp(type='fire',power_ups=power_ups,x=-1,y=5)
-test_pwup_rolleur1 = pwup.PowerUp(type='roller',power_ups=power_ups,x=-3,y=1)
-test_pwup_rolleur2 = pwup.PowerUp(type='roller',power_ups=power_ups,x=-3,y=2)
-test_pwup_rolleur3 = pwup.PowerUp(type='roller',power_ups=power_ups,x=-3,y=3)
-test_pwup_rolleur4 = pwup.PowerUp(type='roller',power_ups=power_ups,x=-3,y=4)
-test_pwup_rolleur5 = pwup.PowerUp(type='roller',power_ups=power_ups,x=-3,y=5)
-test_pwup_bombup1 = pwup.PowerUp(type='bombup',power_ups=power_ups,x=-3,y=7)
-test_pwup_bombup2 = pwup.PowerUp(type='bombup',power_ups=power_ups,x=-3,y=8)
-test_pwup_bombup3 = pwup.PowerUp(type='bombup',power_ups=power_ups,x=-3,y=9)
-test_pwup_bombup4 = pwup.PowerUp(type='bombup',power_ups=power_ups,x=-3,y=10)
-test_pwup_bombup5 = pwup.PowerUp(type='bombup',power_ups=power_ups,x=-3,y=11)
+# test_pwup_feu1 = pwup.PowerUp(type='fire',power_ups=power_ups,x=-1,y=1)
+# test_pwup_feu2 = pwup.PowerUp(type='fire',power_ups=power_ups,x=-1,y=2)
+# test_pwup_feu3 = pwup.PowerUp(type='fire',power_ups=power_ups,x=-1,y=3)
+# test_pwup_feu4 = pwup.PowerUp(type='fire',power_ups=power_ups,x=-1,y=4)
+# test_pwup_feu5 = pwup.PowerUp(type='fire',power_ups=power_ups,x=-1,y=5)
+# test_pwup_rolleur1 = pwup.PowerUp(type='roller',power_ups=power_ups,x=-3,y=1)
+# test_pwup_rolleur2 = pwup.PowerUp(type='roller',power_ups=power_ups,x=-3,y=2)
+# test_pwup_rolleur3 = pwup.PowerUp(type='roller',power_ups=power_ups,x=-3,y=3)
+# test_pwup_rolleur4 = pwup.PowerUp(type='roller',power_ups=power_ups,x=-3,y=4)
+# test_pwup_rolleur5 = pwup.PowerUp(type='roller',power_ups=power_ups,x=-3,y=5)
+# test_pwup_bombup1 = pwup.PowerUp(type='bombup',power_ups=power_ups,x=-3,y=7)
+# test_pwup_bombup2 = pwup.PowerUp(type='bombup',power_ups=power_ups,x=-3,y=8)
+# test_pwup_bombup3 = pwup.PowerUp(type='bombup',power_ups=power_ups,x=-3,y=9)
+# test_pwup_bombup4 = pwup.PowerUp(type='bombup',power_ups=power_ups,x=-3,y=10)
+# test_pwup_bombup5 = pwup.PowerUp(type='bombup',power_ups=power_ups,x=-3,y=11)
 
-mapnlevel.place_level(map1, joueurs, murs_incassables, murs_cassables)
-mapnlevel.place_bonus(texture_list=map1,nbr_pwup=10,power_ups=power_ups)
+mapnlevel.place_level(map1, murs_incassables, murs_cassables, murs_deco, murs_buts)
+# mapnlevel.place_bonus(texture_list=map1,nbr_pwup=50,power_ups=power_ups)
+mapnlevel.place_player(map1,joueurs)
+balle1 = ball.Ball(balles,murs_buts,carte,x=8,y=6)
+
+urs.Sky(texture='deco_grass')
 
 # EditorCamera()
 urs.window.color = urs.color.light_gray

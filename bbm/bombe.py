@@ -5,7 +5,7 @@ if __name__ == '__main__':
 
 
 class Bomb(urs.Entity):
-    def __init__(self, murs_incassables, murs_cassables, bombes, **kwargs): 
+    def __init__(self, murs_incassables:urs.Entity, murs_cassables:urs.Entity, bombes:urs.Entity, balles:urs.Entity, **kwargs): 
         super().__init__()
         """Initialisation de la bombe et de ses attributs
             - rotation_x : permet de faire en sorte que la bombe fasse face à la caméra
@@ -16,7 +16,7 @@ class Bomb(urs.Entity):
             - murs_cassables : une entité utilisée pour le raycasting des branches
             - bombes : une entité utilisée pour une organisation plus propre des branches
             - __anims : les animations de la bombe
-            """
+        """
 
         self.rotation_x = -90
         self.scale=1
@@ -26,6 +26,7 @@ class Bomb(urs.Entity):
         self.murs_incassables = murs_incassables
         self.murs_cassables = murs_cassables
         self.bombes = bombes
+        self.balles = balles
 
         self.__anims = urs.SpriteSheetAnimation(
             texture='./textures/bomb_flash.png',
@@ -43,6 +44,11 @@ class Bomb(urs.Entity):
             setattr(self, key, value)
     
     def explode(self):
+        """Méthode appelée afin de faire exploser la bombe
+        Elle va simplement créer les durées entre les animation ainsi que les entités parentes pour chacune des branches, 
+        puis appelera la méthode branche() pour chacune des quatres directions cardinales. Enfin, elle se désactivera  (puisque le module
+        Ursina est bogué). Les branches quand à elles se suppriment seules à la fin de l'explosion.
+        """
         # les différentes durées entres les animations
         duration = .3
         wt1 = duration/3
@@ -64,11 +70,11 @@ class Bomb(urs.Entity):
         bombe_b = urs.Entity(model='quad', texture='./textures/vide',position=self.position)
         
         # on appelle la création des quatres branches
-        self.branche(bombe_d,'d',wt1,wt2,wt3,wt4,self.murs_incassables,self.murs_cassables,1,0)
-        self.branche(bombe_g,'g',wt1,wt2,wt3,wt4,self.murs_incassables,self.murs_cassables,-1,0)
-        self.branche(bombe_h,'h',wt1,wt2,wt3,wt4,self.murs_incassables,self.murs_cassables,0,1)
-        self.branche(bombe_b,'b',wt1,wt2,wt3,wt4,self.murs_incassables,self.murs_cassables,0,-1)
-                
+        self.branche(bombe_d,'d',wt1,wt2,wt3,wt4,self.murs_incassables,self.murs_cassables,self.balles,1,0)
+        self.branche(bombe_g,'g',wt1,wt2,wt3,wt4,self.murs_incassables,self.murs_cassables,self.balles,-1,0)
+        self.branche(bombe_h,'h',wt1,wt2,wt3,wt4,self.murs_incassables,self.murs_cassables,self.balles,0,1)
+        self.branche(bombe_b,'b',wt1,wt2,wt3,wt4,self.murs_incassables,self.murs_cassables,self.balles,0,-1)
+        
         # on change le parent pour le milieu et chaque branche
         m1.parent = self.bombes
         bombe_d.parent = self.bombes
@@ -86,10 +92,20 @@ class Bomb(urs.Entity):
     def branche(
         self,
         b_cote:urs.Entity, cote:str,
-        wt1, wt2, wt3, wt4,
-        murs_incassables, murs_cassables,
-        x_offset, y_offset,
+        wt1:float, wt2:float, wt3:float, wt4:float,
+        murs_incassables:urs.Entity, murs_cassables:urs.Entity, balles:urs.Entity,
+        x_offset:int, y_offset:int,
         ):
+        """Méthode permettant de créer une branche dans une des quatres directions cardinales
+            - b_cote : l'entité qui sera parente des "tiles" de la branche
+            - cote : le nom du cote, utilisé pour l'application des textures
+            - wt1, wt2, wt3, wt4 : le temps entre chaque "frame" des animations
+            - murs_incassables : une entité utilisée pour le raycasting des branches
+            - murs_cassables : une entité utilisée pour le raycasting des branches
+            - balles : une entité utilisée pour le raycasting des balles
+            - x_offset, y_offset : determine la direction prise par la branche
+                (droite=(1,0) ; gauche=(-1,0) ; haut=(0,1) ; bas=(0,-1))
+        """
         for i in range(self.longueur):
             # raycast pour les deux types de mur
             hit_UnWall = urs.raycast(b_cote.position, (x_offset,y_offset), traverse_target=murs_incassables, distance=i+1, debug=False)
@@ -117,6 +133,15 @@ class Bomb(urs.Entity):
                 if i+1 == self.longueur:
                     new_sprite.texture = self.__tex_folder+cote+'12'
                     new_sprite.name = 'bout'
+                # on regarde si on touche une balle
+                hit_Ball = urs.raycast(b_cote.position, (x_offset,y_offset), traverse_target=balles, distance=i+1, debug=False)
+                # si on en touche une :
+                if hit_Ball:
+                    # on la décale jusqu'au bout de la branche actuelle (qui n'est pas forcément finie)
+                    # hit_Ball.entity.x += x_offset*(self.longueur-i)
+                    # hit_Ball.entity.y += y_offset*(self.longueur-i)
+                    hit_Ball.entity.x_velocity += x_offset*(self.longueur-i)
+                    hit_Ball.entity.y_velocity += y_offset*(self.longueur-i)
         # mise à jour des textures au fil du temps :
         for sprite in b_cote.children:
             # si ce n'est pas un bout
