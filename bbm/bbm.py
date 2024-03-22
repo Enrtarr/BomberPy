@@ -38,35 +38,42 @@ if __name__ == '__main__':
     app = urs.Ursina(title=titre)
 # app = Ursina(title=titre,development_mode=False)
 
+gm = 'foot'
+gm_d = {
+    'br': {
+        'map': {
+            'texture': 'map3',
+            'bonus': True,
+            'sky': 'grass',
+        },
+        'player': {
+            'speed': 2,
+            'bomb_size': 3,
+            'max_bomb': 1,
+            'max_lives': 3,
+            'stun_time': 2,
+        },
+    },
+    'foot': {
+        'map': {
+            'texture': 'map7',
+            'bonus': False,
+            'sky': 'grass',
+        },
+        'player': {
+            'speed': 3,
+            'bomb_size': 2,
+            'max_bomb': 3,
+            'max_lives': 2,
+            'stun_time': 1,
+        },
+    },
+}
 input_mode = 'Clavier'
 keys = {
     "atk_key" : 'space',
     "pause_key" : 'escape',
 }
-
-
-# pause_handler = urs.Entity(ignore_paused=True)
-# pause_text = urs.Text('PAUSED', origin=(0,0), scale=2, enabled=False)
-# def pause_handler_input(key):
-#     if input_mode == 'Manette':
-#         if key == urs.Keys.gamepad_start:
-#             urs.application.paused = not urs.application.paused
-#             pause_text.enabled = urs.application.paused
-#     else:
-#         if key == keys['pause_key']:
-#             urs.application.paused = not urs.application.paused
-#             pause_text.enabled = urs.application.paused
-# pause_handler.input = pause_handler_input
-
-
-# print(camel_to_snake('CamelToSnake'))
-# print(snake_to_camel('snake_to_camel'))
-# test_var = 'test_str'
-# printvar(test_var)
-# info_var = 'info_str'
-# print_info(info_var)
-# warning_var = 'warning_str'
-# print_warning(warning_var)
 
 
 class Player(urs.Entity): 
@@ -88,14 +95,21 @@ class Player(urs.Entity):
         self.always_on_top = True
         self.collider = 'box'
         
-        self.speed = 2
-        self.bomb_size = 3
-        self.max_bomb = 3
+        self.speed = gm_d[gm]['player']['speed']
+        self.bomb_size = gm_d[gm]['player']['bomb_size']
+        self.max_bomb = gm_d[gm]['player']['max_bomb']
         self.bombed = 1
         
+        self.max_lives = gm_d[gm]['player']['max_lives']
+        self.lives = self.max_lives
+        self.respawn_time = 1.7
+        
+        self.start_position = self.position
         self.stunned = False
+        self.can_move = True
+        
         self.__anims = urs.SpriteSheetAnimation(
-            texture='/textures/new_bbm_sheet3.png',
+            texture='/textures/new_bbm_sheet4.png',
             tileset_size=(18,5),
             fps=4,
             model='plane',
@@ -105,7 +119,9 @@ class Player(urs.Entity):
                 'walk_left': ((3,4),(4,4)),
                 'walk_down': ((6,4),(7,4)),
                 'walk_up': ((0,4),(1,4)),
-                'interact': ((0,5),(0,5))
+                'interact': ((0,5),(0,5)),
+                'damage': ((14,2),(17,2)),
+                'death': ((6,1),(12,1)),
             }
         )
         self.__anims.parent = self
@@ -133,9 +149,9 @@ class Player(urs.Entity):
             if self.__anims.animations['walk_down'].paused:
                 self.__anims.play_animation('walk_down')
         elif direction.x == 0 and direction.y == 0:
-            if self.__anims.animations['idle'].paused:
+            if self.__anims.animations['idle'].paused and self.__anims.animations['damage'].paused:
                 self.__anims.play_animation('idle')
-            
+    
     def __unbomb(self):
         self.bombed -= 1
 
@@ -145,7 +161,10 @@ class Player(urs.Entity):
         if key == keys['atk_key']:
             if self.bombed < self.max_bomb + 1:
                 self.bombed += 1
-                bombe_p = bombe.Bomb(murs_incassables,murs_cassables,bombes,balles,x=round(self.x),y=round(self.y),longueur=self.bomb_size)
+                if gm == 'br':
+                    bombe_p = bombe.Bomb(murs_incassables,murs_cassables,bombes,balles,x=round(self.x),y=round(self.y),longueur=self.bomb_size)
+                elif gm == 'foot':
+                    bombe_p = bombe.Bomb(murs_incassables,murs_cassables,bombes,balles,x=self.x,y=self.y,longueur=self.bomb_size)
                 urs.invoke(bombe_p.explode, delay=3)
                 urs.invoke(self.__unbomb, delay=3)
                 # @after(3)
@@ -159,7 +178,7 @@ class Player(urs.Entity):
             3. On met à jour l'étourdissement"""
         self.direction = urs.Vec2(urs.held_keys['d'] - urs.held_keys['a'], urs.held_keys['w'] - urs.held_keys['s']).normalized()
         # self.direction = urs.Vec2(urs.held_keys[urs.Keys.gamepad_left_stick_x], urs.held_keys[urs.Keys.gamepad_left_stick_y]).normalized()
-        if not self.stunned:
+        if self.can_move:
             hit_map = urs.raycast(self.position , self.direction, traverse_target=carte, distance=.5, debug=False)
             if not hit_map:
                 self.position += self.direction * urs.time.dt * self.speed
@@ -178,11 +197,21 @@ class Player(urs.Entity):
                     hit_pwup.entity.recuperer()
         if self.intersects(bombes).hit:
             self.stunned = True
+            self.can_move = False
         elif self.stunned:
-            # invoke(setattr, self, 'stunned', False, delay=2)
             self.stunned = False
-            print('aïe')
-
+            self.lives -= 1
+            if self.lives == 0:
+                self.__anims.play_animation('death')
+                urs.invoke(self.__anims.play_animation, 'idle', delay=self.respawn_time)
+                urs.invoke(setattr, self, 'position', self.start_position, delay=self.respawn_time)
+                urs.invoke(setattr, self, 'lives', self.max_lives, delay=self.respawn_time)
+                urs.invoke(setattr, self, 'can_move', True, delay=self.respawn_time)
+            else:
+                self.__anims.play_animation('damage')
+                urs.invoke(setattr, self, 'can_move', True, delay=gm_d[gm]['player']['stun_time'])
+                urs.invoke(self.__anims.play_animation, 'idle', delay=gm_d[gm]['player']['stun_time'])
+            
 
 joueurs = []
 carte = urs.Entity(model='quad', texture='./textures/vide')
@@ -195,7 +224,8 @@ bombes = urs.Entity(model='quad', texture='./textures/vide')
 # power_ups = pwup.PwupSpawner()
 power_ups = urs.Entity(model='quad', texture='./textures/vide')
 
-map1 = mapnlevel.scan_texture(urs.load_texture('./textures/map7'))
+
+map1 = mapnlevel.scan_texture(urs.load_texture(f"./textures/{gm_d[gm]['map']['texture']}"))
 print(map1)
 
 # la première fois qu'une bombe explose, elle provoque un lag-spike, on en fait donc exploser une à l'avance dehors de l'écran
@@ -227,7 +257,8 @@ joueurs.append(player1)
 # test_pwup_bombup5 = pwup.PowerUp(type='bombup',power_ups=power_ups,x=-3,y=11)
 
 mapnlevel.place_level(map1, murs_incassables, murs_cassables, murs_deco, murs_buts)
-# mapnlevel.place_bonus(texture_list=map1,nbr_pwup=50,power_ups=power_ups)
+if gm_d[gm]['map']['bonus']:
+    mapnlevel.place_bonus(texture_list=map1,nbr_pwup=50,power_ups=power_ups)
 mapnlevel.place_player(map1,joueurs)
 balle1 = ball.Ball(balles,murs_buts,carte,x=8,y=6)
 

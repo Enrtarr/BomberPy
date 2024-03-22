@@ -134,7 +134,7 @@ class Bomb(urs.Entity):
                     new_sprite.texture = self.__tex_folder+cote+'12'
                     new_sprite.name = 'bout'
                 # on regarde si on touche une balle
-                hit_Ball = urs.raycast(b_cote.position, (x_offset,y_offset), traverse_target=balles, distance=i+1, debug=False)
+                hit_Ball = urs.boxcast(b_cote.position, (x_offset,y_offset), traverse_target=balles,thickness=(1,1) , distance=i+1)
                 # si on en touche une :
                 if hit_Ball:
                     # on la décale jusqu'au bout de la branche actuelle (qui n'est pas forcément finie)
