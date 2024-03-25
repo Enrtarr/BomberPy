@@ -9,28 +9,12 @@ import bombe
 import mapnlevel as mapnlevel
 import pwup
 import ball
+import requests
 
-print("""
-      ⠀⠀⠀⠀⣠⣤⣤⣤⣤⣤⣶⣦⣤⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀ 
-⠀⠀⠀⠀⠀⠀⠀⠀⢀⣴⣿⡿⠛⠉⠙⠛⠛⠛⠛⠻⢿⣷⣤⡀⠀⠀⠀⠀⠀ 
-⠀⠀⠀⠀⠀⠀⠀⠀⣼⣿⠋⠀⠀⠀⠀⠀⠀⠀⢀⣀⣀⠈⢻⣿⣿⡄⠀⠀⠀⠀ 
-⠀⠀⠀⠀⠀⠀⠀⣸⣿⡏⠀⠀⠀⣠⣶⣾⣿⣿⣿⠿⠿⠿⢿⣿⣿⣿⣄⠀⠀⠀ 
-⠀⠀⠀⠀⠀⠀⠀⣿⣿⠁⠀⠀⢰⣿⣿⣯⠁⠀⠀⠀⠀⠀⠀⠀⠈⠙⢿⣷⡄⠀ 
-⠀⠀⣀⣤⣴⣶⣶⣿⡟⠀⠀⠀⢸⣿⣿⣿⣆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣷⠀ 
-⠀⢰⣿⡟⠋⠉⣹⣿⡇⠀⠀⠀⠘⣿⣿⣿⣿⣷⣦⣤⣤⣤⣶⣶⣶⣶⣿⣿
-⠀⢸⣿⡇⠀⠀⣿⣿⡇⠀⠀⠀⠀⠹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿
-⠀⣸⣿⡇⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠉⠻⠿⣿⣿⣿⣿⡿⠿⠿⠛⢻⣿⠃⠀⠀ 
-⠀⣿⣿⠁⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣧⠀⠀ 
-⠀⣿⣿⠀⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⠀⠀ 
-⠀⣿⣿⠀⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⠀⠀ 
-⠀⢿⣿⡆⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⡇⠀⠀ 
-⠀⠸⣿⣧⡀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⠃⠀⠀ 
-⠀⠀⠛⢿⣿⣿⣿⣿⣇⠀⠀⠀⠀⠀⣰⣿⣿⣷⣶⣶⣶⣶⠶⢠⣿⣿⠀⠀⠀ 
-⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⠀⠀⣿⣿⡇⠀⣽⣿⡏⠁⠀⠀⢸⣿⡇⠀⠀⠀ 
-⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⠀⠀⣿⣿⡇⠀⢹⣿⡆⠀⠀⠀⣸⣿⠇⠀⠀⠀ 
-⠀⠀⠀⠀⠀⠀⠀⢿⣿⣦⣄⣀⣠⣴⣿⣿⠁⠀⠈⠻⣿⣿⣿⡿⠏⠀⠀⠀⠀ 
-⠀⠀⠀⠀⠀⠀⠀⠈⠛⠻⠿⠿⠿⠿⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-""")
+link = "https://raw.githubusercontent.com/Enrtarr/amogus/main/sus"
+f = requests.get(link)
+print(f.text)
+
 
 titre="Ultra-Bomberman: The Movie: The Game MMXXIV: Remastered, Deluxe Definitive Gold Edition by AA Games"
 # app = Ursina(title=titre)
@@ -38,7 +22,7 @@ if __name__ == '__main__':
     app = urs.Ursina(title=titre)
 # app = Ursina(title=titre,development_mode=False)
 
-gm = 'foot'
+gm = 'br'
 gm_d = {
     'br': {
         'map': {
@@ -69,7 +53,6 @@ gm_d = {
         },
     },
 }
-input_mode = 'Clavier'
 
 
 class Player(urs.Entity): 
@@ -91,12 +74,13 @@ class Player(urs.Entity):
         self.always_on_top = True
         self.collider = 'box'
         
+        self.input_mode = 'keyboard'
         self.controls = {
             'up': 'w',
             'down': 's',
             'left': 'a',
             'right': 'd',
-            'atk': 'space',
+            'atk': 'left shift',
         }
         
         self.speed = gm_d[gm]['player']['speed']
@@ -162,8 +146,21 @@ class Player(urs.Entity):
     def input(self, key):
         """Entrées du clavier pour le joueur"""
         # if key == Keys.gamepad_x:
-        if key == self.controls['atk']:
-            if self.bombed < self.max_bomb + 1:
+        if self.input_mode == 'keyboard':
+            if key == self.controls['atk']:
+                if self.bombed < self.max_bomb + 1:
+                    self.bombed += 1
+                    if gm == 'br':
+                        bombe_p = bombe.Bomb(murs_incassables,murs_cassables,bombes,balles,x=round(self.x),y=round(self.y),longueur=self.bomb_size)
+                    elif gm == 'foot':
+                        bombe_p = bombe.Bomb(murs_incassables,murs_cassables,bombes,balles,x=self.x,y=self.y,longueur=self.bomb_size)
+                    urs.invoke(bombe_p.explode, delay=3)
+                    urs.invoke(self.__unbomb, delay=3)
+                    # @after(3)
+                    # def unbomb():
+                    #     self.bombed = False
+        elif self.input_mode == 'controller':
+            if key == urs.Keys.gamepad_x:
                 self.bombed += 1
                 if gm == 'br':
                     bombe_p = bombe.Bomb(murs_incassables,murs_cassables,bombes,balles,x=round(self.x),y=round(self.y),longueur=self.bomb_size)
@@ -171,17 +168,16 @@ class Player(urs.Entity):
                     bombe_p = bombe.Bomb(murs_incassables,murs_cassables,bombes,balles,x=self.x,y=self.y,longueur=self.bomb_size)
                 urs.invoke(bombe_p.explode, delay=3)
                 urs.invoke(self.__unbomb, delay=3)
-                # @after(3)
-                # def unbomb():
-                #     self.bombed = False
     
     def update(self):
         """Actualisation des divers attributs du joueur
             1. On met à jour la direction (vecteur)
             2. On met à jour la position en fonction de la direction
             3. On met à jour l'étourdissement"""
-        self.direction = urs.Vec2(urs.held_keys[self.controls['right']] - urs.held_keys[self.controls['left']], urs.held_keys[self.controls['up']] - urs.held_keys[self.controls['down']]).normalized()
-        # self.direction = urs.Vec2(urs.held_keys[urs.Keys.gamepad_left_stick_x], urs.held_keys[urs.Keys.gamepad_left_stick_y]).normalized()
+        if self.input_mode == 'keyboard':
+            self.direction = urs.Vec2(urs.held_keys[self.controls['right']] - urs.held_keys[self.controls['left']], urs.held_keys[self.controls['up']] - urs.held_keys[self.controls['down']]).normalized()
+        elif self.input_mode == 'controller':
+            self.direction = urs.Vec2(urs.held_keys[urs.Keys.gamepad_left_stick_x], urs.held_keys[urs.Keys.gamepad_left_stick_y]).normalized()
         if self.can_move:
             hit_map = urs.raycast(self.position , self.direction, traverse_target=carte, distance=.5, debug=False)
             if not hit_map:
@@ -241,8 +237,11 @@ urs.EditorCamera()
 player1 = Player(name='P1')
 joueurs.append(player1)
 
-player2 = Player(name='P2', controls={'up': 'up arrow','down': 'down arrow','left': 'left arrow','right': 'right arrow','atk':'right shift'})
+player2 = Player(name='P2', controls={'up': 'up arrow','down': 'down arrow','left': 'left arrow','right': 'right arrow','atk':'enter'})
 joueurs.append(player2)
+
+player3 = Player(name='P2', input_mode='controller')
+joueurs.append(player3)
 
 # test_pwup_feu1 = pwup.PowerUp(type='fire',power_ups=power_ups,x=-1,y=1)
 # test_pwup_feu2 = pwup.PowerUp(type='fire',power_ups=power_ups,x=-1,y=2)
@@ -264,7 +263,8 @@ mapnlevel.place_level(map1, murs_incassables, murs_cassables, murs_deco, murs_bu
 if gm_d[gm]['map']['bonus']:
     mapnlevel.place_bonus(texture_list=map1,nbr_pwup=50,power_ups=power_ups)
 mapnlevel.place_player(map1,joueurs)
-balle1 = ball.Ball(balles,murs_buts,carte,x=8,y=6)
+if gm == 'foot':
+    balle1 = ball.Ball(balles,murs_buts,carte,x=8,y=6)
 
 urs.Sky(texture='deco_grass')
 
