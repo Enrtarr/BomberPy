@@ -70,10 +70,6 @@ gm_d = {
     },
 }
 input_mode = 'Clavier'
-keys = {
-    "atk_key" : 'space',
-    "pause_key" : 'escape',
-}
 
 
 class Player(urs.Entity): 
@@ -94,6 +90,14 @@ class Player(urs.Entity):
         # self.texture = '/textures/vide'
         self.always_on_top = True
         self.collider = 'box'
+        
+        self.controls = {
+            'up': 'w',
+            'down': 's',
+            'left': 'a',
+            'right': 'd',
+            'atk': 'space',
+        }
         
         self.speed = gm_d[gm]['player']['speed']
         self.bomb_size = gm_d[gm]['player']['bomb_size']
@@ -158,7 +162,7 @@ class Player(urs.Entity):
     def input(self, key):
         """Entrées du clavier pour le joueur"""
         # if key == Keys.gamepad_x:
-        if key == keys['atk_key']:
+        if key == self.controls['atk']:
             if self.bombed < self.max_bomb + 1:
                 self.bombed += 1
                 if gm == 'br':
@@ -176,7 +180,7 @@ class Player(urs.Entity):
             1. On met à jour la direction (vecteur)
             2. On met à jour la position en fonction de la direction
             3. On met à jour l'étourdissement"""
-        self.direction = urs.Vec2(urs.held_keys['d'] - urs.held_keys['a'], urs.held_keys['w'] - urs.held_keys['s']).normalized()
+        self.direction = urs.Vec2(urs.held_keys[self.controls['right']] - urs.held_keys[self.controls['left']], urs.held_keys[self.controls['up']] - urs.held_keys[self.controls['down']]).normalized()
         # self.direction = urs.Vec2(urs.held_keys[urs.Keys.gamepad_left_stick_x], urs.held_keys[urs.Keys.gamepad_left_stick_y]).normalized()
         if self.can_move:
             hit_map = urs.raycast(self.position , self.direction, traverse_target=carte, distance=.5, debug=False)
@@ -211,7 +215,7 @@ class Player(urs.Entity):
                 self.__anims.play_animation('damage')
                 urs.invoke(setattr, self, 'can_move', True, delay=gm_d[gm]['player']['stun_time'])
                 urs.invoke(self.__anims.play_animation, 'idle', delay=gm_d[gm]['player']['stun_time'])
-            
+
 
 joueurs = []
 carte = urs.Entity(model='quad', texture='./textures/vide')
@@ -237,8 +241,8 @@ urs.EditorCamera()
 player1 = Player(name='P1')
 joueurs.append(player1)
 
-# player2 = Player(name='P2')
-# joueurs.append(player2)
+player2 = Player(name='P2', controls={'up': 'up arrow','down': 'down arrow','left': 'left arrow','right': 'right arrow','atk':'right shift'})
+joueurs.append(player2)
 
 # test_pwup_feu1 = pwup.PowerUp(type='fire',power_ups=power_ups,x=-1,y=1)
 # test_pwup_feu2 = pwup.PowerUp(type='fire',power_ups=power_ups,x=-1,y=2)
