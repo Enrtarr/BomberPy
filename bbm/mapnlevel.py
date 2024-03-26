@@ -93,8 +93,8 @@ def place_level(texture_list:list, murs_incassables:urs.Entity, murs_cassables:u
     
     width = len(texture_list[0])
     height = len(texture_list)
-    urs.camera.position = (width/2, height/2)
-    urs.camera.fov = width * 4
+    urs.camera.position = ((width-1)/2, (height-1)/2, -2.25*(width*height)**.5)
+    # urs.camera.fov = width * 4
     
     for y in range(height):
         for x in range(width):

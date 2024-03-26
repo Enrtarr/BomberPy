@@ -26,9 +26,9 @@ gm = 'br'
 gm_d = {
     'br': {
         'map': {
-            'texture': 'map3',
+            'texture': 'map9',
             'bonus': True,
-            'sky': 'grass',
+            'sky': 'brick',
         },
         'player': {
             'speed': 2,
@@ -36,6 +36,7 @@ gm_d = {
             'max_bomb': 1,
             'max_lives': 3,
             'stun_time': 2,
+            'respawn_time': 10**100,
         },
     },
     'foot': {
@@ -50,6 +51,7 @@ gm_d = {
             'max_bomb': 3,
             'max_lives': 2,
             'stun_time': 1,
+            'respawn_time': 10,
         },
     },
 }
@@ -90,7 +92,8 @@ class Player(urs.Entity):
         
         self.max_lives = gm_d[gm]['player']['max_lives']
         self.lives = self.max_lives
-        self.respawn_time = 1.7
+        self.respawn_time = gm_d[gm]['player']['respawn_time']
+        self.dead = False
         
         self.start_position = self.position
         self.stunned = False
@@ -189,7 +192,7 @@ class Player(urs.Entity):
                     hit_pwup.entity.collected = True
                     stat = hit_pwup.entity.stat_change()
                     if stat == 'speed':
-                        self.speed += 1
+                        self.speed += .25
                     elif stat == 'bomb_size':
                         self.bomb_size += 1
                     elif stat == 'max_bomb':
@@ -203,10 +206,16 @@ class Player(urs.Entity):
             self.lives -= 1
             if self.lives == 0:
                 self.__anims.play_animation('death')
+                self.dead = True
+                urs.invoke(setattr, self, 'rotation_x', 90, delay=1.7)
+                urs.invoke(setattr, self, 'z', 5, delay=1.7)
                 urs.invoke(self.__anims.play_animation, 'idle', delay=self.respawn_time)
                 urs.invoke(setattr, self, 'position', self.start_position, delay=self.respawn_time)
                 urs.invoke(setattr, self, 'lives', self.max_lives, delay=self.respawn_time)
                 urs.invoke(setattr, self, 'can_move', True, delay=self.respawn_time)
+                urs.invoke(setattr, self, 'rotation_x', -90, delay=self.respawn_time)
+                urs.invoke(setattr, self, 'z', 0, delay=self.respawn_time)
+                urs.invoke(setattr, self, 'dead', False, delay=self.respawn_time)
             else:
                 self.__anims.play_animation('damage')
                 urs.invoke(setattr, self, 'can_move', True, delay=gm_d[gm]['player']['stun_time'])
@@ -232,41 +241,29 @@ print(map1)
 bombe_lag=bombe.Bomb(murs_incassables,murs_cassables,bombes,balles,position=(-100,-100)) ; urs.invoke(bombe_lag.explode, delay=0) # ; urs.destroy(bombe_lag, delay=0)
 
 
-urs.EditorCamera()
+# urs.EditorCamera()
 
 player1 = Player(name='P1')
 joueurs.append(player1)
 
-player2 = Player(name='P2', controls={'up': 'up arrow','down': 'down arrow','left': 'left arrow','right': 'right arrow','atk':'enter'})
+player2 = Player(name='P2', controls={'up': 'up arrow','down': 'down arrow','left': 'left arrow','right': 'right arrow','atk':'right shift'})
 joueurs.append(player2)
 
-player3 = Player(name='P2', input_mode='controller')
+player3 = Player(name='P3', input_mode='controller')
 joueurs.append(player3)
 
-# test_pwup_feu1 = pwup.PowerUp(type='fire',power_ups=power_ups,x=-1,y=1)
-# test_pwup_feu2 = pwup.PowerUp(type='fire',power_ups=power_ups,x=-1,y=2)
-# test_pwup_feu3 = pwup.PowerUp(type='fire',power_ups=power_ups,x=-1,y=3)
-# test_pwup_feu4 = pwup.PowerUp(type='fire',power_ups=power_ups,x=-1,y=4)
-# test_pwup_feu5 = pwup.PowerUp(type='fire',power_ups=power_ups,x=-1,y=5)
-# test_pwup_rolleur1 = pwup.PowerUp(type='roller',power_ups=power_ups,x=-3,y=1)
-# test_pwup_rolleur2 = pwup.PowerUp(type='roller',power_ups=power_ups,x=-3,y=2)
-# test_pwup_rolleur3 = pwup.PowerUp(type='roller',power_ups=power_ups,x=-3,y=3)
-# test_pwup_rolleur4 = pwup.PowerUp(type='roller',power_ups=power_ups,x=-3,y=4)
-# test_pwup_rolleur5 = pwup.PowerUp(type='roller',power_ups=power_ups,x=-3,y=5)
-# test_pwup_bombup1 = pwup.PowerUp(type='bombup',power_ups=power_ups,x=-3,y=7)
-# test_pwup_bombup2 = pwup.PowerUp(type='bombup',power_ups=power_ups,x=-3,y=8)
-# test_pwup_bombup3 = pwup.PowerUp(type='bombup',power_ups=power_ups,x=-3,y=9)
-# test_pwup_bombup4 = pwup.PowerUp(type='bombup',power_ups=power_ups,x=-3,y=10)
-# test_pwup_bombup5 = pwup.PowerUp(type='bombup',power_ups=power_ups,x=-3,y=11)
+player4 = Player(name='P4', controls={'up': 'u','down': 'j','left': 'h','right': 'k','atk':'space'})
+joueurs.append(player4)
+
 
 mapnlevel.place_level(map1, murs_incassables, murs_cassables, murs_deco, murs_buts)
 if gm_d[gm]['map']['bonus']:
-    mapnlevel.place_bonus(texture_list=map1,nbr_pwup=50,power_ups=power_ups)
+    mapnlevel.place_bonus(texture_list=map1,nbr_pwup=17,power_ups=power_ups)
 mapnlevel.place_player(map1,joueurs)
 if gm == 'foot':
     balle1 = ball.Ball(balles,murs_buts,carte,x=8,y=6)
 
-urs.Sky(texture='deco_grass')
+urs.Sky(texture=gm_d[gm]['map']['sky'])
 
 # EditorCamera()
 urs.window.color = urs.color.light_gray
