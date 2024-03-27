@@ -26,7 +26,7 @@ gm = 'br'
 gm_d = {
     'br': {
         'map': {
-            'texture': 'map9',
+            'texture': 'map4',
             'bonus': True,
             'sky': 'brick',
         },
@@ -99,8 +99,9 @@ class Player(urs.Entity):
         self.stunned = False
         self.can_move = True
         
+        self.sprite_color = 'white'
         self.__anims = urs.SpriteSheetAnimation(
-            texture='/textures/new_bbm_sheet4.png',
+            texture=f'/textures/sprite_{self.sprite_color}.png',
             tileset_size=(18,5),
             fps=4,
             model='plane',
