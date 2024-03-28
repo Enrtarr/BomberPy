@@ -22,6 +22,11 @@ class Ball(urs.Entity):
     def reset(self):
         self.x = 8
         self.y = 6
+    
+    def input(self,key):
+        if key == 'backspace':
+            self.x = 8
+            self.y = 6
      
     def update(self):
         self.old_x = self.x

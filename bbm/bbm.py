@@ -1,5 +1,5 @@
 
-import glob
+import random
 # from ursina import *
 import ursina as urs
 
@@ -9,11 +9,11 @@ import bombe
 import mapnlevel as mapnlevel
 import pwup
 import ball
-import requests
+# import requests
 
-link = "https://raw.githubusercontent.com/Enrtarr/amogus/main/sus"
-f = requests.get(link)
-print(f.text)
+# link = "https://raw.githubusercontent.com/Enrtarr/amogus/main/sus"
+# f = requests.get(link)
+# print(f.text)
 
 
 titre="Ultra-Bomberman: The Movie: The Game MMXXIV: Remastered, Deluxe Definitive Gold Edition by AA Games"
@@ -22,11 +22,13 @@ if __name__ == '__main__':
     app = urs.Ursina(title=titre)
 # app = Ursina(title=titre,development_mode=False)
 
+map_br_nbr = 'map' + str(random.randint(1,3))
+map_foot_nbr = 'map' + str(random.randint(6,10))
 gm = 'foot'
 gm_d = {
     'br': {
         'map': {
-            'texture': 'map4',
+            'texture': map_br_nbr,
             'bonus': True,
             'sky': 'brick',
         },
@@ -41,7 +43,7 @@ gm_d = {
     },
     'foot': {
         'map': {
-            'texture': 'map7',
+            'texture': map_foot_nbr,
             'bonus': False,
             'sky': 'grass',
         },
@@ -82,7 +84,7 @@ class Player(urs.Entity):
             'down': 's',
             'left': 'a',
             'right': 'd',
-            'atk': 'left shift',
+            'atk': 'q',
         }
         
         self.speed = gm_d[gm]['player']['speed']
