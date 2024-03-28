@@ -66,4 +66,3 @@ class Ball(urs.Entity):
             urs.invoke(self.reset, delay=1)
             self.x_velocity = 0
             self.y_velocity = 0
-            print('+1')

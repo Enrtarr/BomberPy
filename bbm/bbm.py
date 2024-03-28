@@ -22,7 +22,7 @@ if __name__ == '__main__':
     app = urs.Ursina(title=titre)
 # app = Ursina(title=titre,development_mode=False)
 
-gm = 'br'
+gm = 'foot'
 gm_d = {
     'br': {
         'map': {
@@ -51,14 +51,14 @@ gm_d = {
             'max_bomb': 3,
             'max_lives': 2,
             'stun_time': 1,
-            'respawn_time': 10,
+            'respawn_time': 7,
         },
     },
 }
 
 
 class Player(urs.Entity): 
-    def __init__(self, **kwargs):
+    def __init__(self,sc:str='white', **kwargs):
         """Initialisation du joueur et des attributs
             - scale_y : la déformation verticale du joueur
             - rotation_x : permet de faire en sorte que le joueur fasse face à la caméra
@@ -99,9 +99,8 @@ class Player(urs.Entity):
         self.stunned = False
         self.can_move = True
         
-        self.sprite_color = 'white'
         self.__anims = urs.SpriteSheetAnimation(
-            texture=f'/textures/sprite_{self.sprite_color}.png',
+            texture=f'/textures/sprite_{sc}.png',
             tileset_size=(18,5),
             fps=4,
             model='plane',
@@ -113,7 +112,7 @@ class Player(urs.Entity):
                 'walk_up': ((0,4),(1,4)),
                 'interact': ((0,5),(0,5)),
                 'damage': ((14,2),(17,2)),
-                'death': ((6,1),(12,1)),
+                'death': ((6,1),(14,1)),
             }
         )
         self.__anims.parent = self
@@ -152,26 +151,29 @@ class Player(urs.Entity):
         # if key == Keys.gamepad_x:
         if self.input_mode == 'keyboard':
             if key == self.controls['atk']:
-                if self.bombed < self.max_bomb + 1:
-                    self.bombed += 1
-                    if gm == 'br':
-                        bombe_p = bombe.Bomb(murs_incassables,murs_cassables,bombes,balles,x=round(self.x),y=round(self.y),longueur=self.bomb_size)
-                    elif gm == 'foot':
-                        bombe_p = bombe.Bomb(murs_incassables,murs_cassables,bombes,balles,x=self.x,y=self.y,longueur=self.bomb_size)
-                    urs.invoke(bombe_p.explode, delay=3)
-                    urs.invoke(self.__unbomb, delay=3)
-                    # @after(3)
-                    # def unbomb():
-                    #     self.bombed = False
+                if not self.dead:
+                    if self.bombed < self.max_bomb + 1:
+                        self.bombed += 1
+                        if gm == 'br':
+                            bombe_p = bombe.Bomb(murs_incassables,murs_cassables,bombes,balles,x=round(self.x),y=round(self.y),longueur=self.bomb_size)
+                        elif gm == 'foot':
+                            bombe_p = bombe.Bomb(murs_incassables,murs_cassables,bombes,balles,x=self.x,y=self.y,longueur=self.bomb_size)
+                        urs.invoke(bombe_p.explode, delay=3)
+                        urs.invoke(self.__unbomb, delay=3)
+                        # @after(3)
+                        # def unbomb():
+                        #     self.bombed = False
         elif self.input_mode == 'controller':
             if key == urs.Keys.gamepad_x:
-                self.bombed += 1
-                if gm == 'br':
-                    bombe_p = bombe.Bomb(murs_incassables,murs_cassables,bombes,balles,x=round(self.x),y=round(self.y),longueur=self.bomb_size)
-                elif gm == 'foot':
-                    bombe_p = bombe.Bomb(murs_incassables,murs_cassables,bombes,balles,x=self.x,y=self.y,longueur=self.bomb_size)
-                urs.invoke(bombe_p.explode, delay=3)
-                urs.invoke(self.__unbomb, delay=3)
+                if not self.dead:
+                    if self.bombed < self.max_bomb + 1:
+                        self.bombed += 1
+                        if gm == 'br':
+                            bombe_p = bombe.Bomb(murs_incassables,murs_cassables,bombes,balles,x=round(self.x),y=round(self.y),longueur=self.bomb_size)
+                        elif gm == 'foot':
+                            bombe_p = bombe.Bomb(murs_incassables,murs_cassables,bombes,balles,x=self.x,y=self.y,longueur=self.bomb_size)
+                        urs.invoke(bombe_p.explode, delay=3)
+                        urs.invoke(self.__unbomb, delay=3)
     
     def update(self):
         """Actualisation des divers attributs du joueur
@@ -208,8 +210,8 @@ class Player(urs.Entity):
             if self.lives == 0:
                 self.__anims.play_animation('death')
                 self.dead = True
-                urs.invoke(setattr, self, 'rotation_x', 90, delay=1.7)
-                urs.invoke(setattr, self, 'z', 5, delay=1.7)
+                urs.invoke(setattr, self, 'rotation_x', 90, delay=1.9)
+                urs.invoke(setattr, self, 'z', 5, delay=1.9)
                 urs.invoke(self.__anims.play_animation, 'idle', delay=self.respawn_time)
                 urs.invoke(setattr, self, 'position', self.start_position, delay=self.respawn_time)
                 urs.invoke(setattr, self, 'lives', self.max_lives, delay=self.respawn_time)
@@ -247,13 +249,19 @@ bombe_lag=bombe.Bomb(murs_incassables,murs_cassables,bombes,balles,position=(-10
 player1 = Player(name='P1')
 joueurs.append(player1)
 
-player2 = Player(name='P2', controls={'up': 'up arrow','down': 'down arrow','left': 'left arrow','right': 'right arrow','atk':'right shift'})
+player2 = Player(name='P2', 
+                 controls={'up': 'up arrow','down': 'down arrow','left': 'left arrow','right': 'right arrow','atk':'right shift'},
+                 sc='black')
 joueurs.append(player2)
 
-player3 = Player(name='P3', input_mode='controller')
+player3 = Player(name='P3', 
+                 input_mode='controller',
+                 sc='bonk')
 joueurs.append(player3)
 
-player4 = Player(name='P4', controls={'up': 'u','down': 'j','left': 'h','right': 'k','atk':'space'})
+player4 = Player(name='P4', 
+                 controls={'up': 'u','down': 'j','left': 'h','right': 'k','atk':'space'},
+                 sc='pink')
 joueurs.append(player4)
 
 
