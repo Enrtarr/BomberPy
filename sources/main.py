@@ -22,7 +22,7 @@ if __name__ == '__main__':
     app = urs.Ursina(title=titre)
 # app = Ursina(title=titre,development_mode=False)
 
-map_br_nbr = 'map' + str(random.randint(1,3))
+map_br_nbr = 'map' + str(random.randint(1,4))
 map_foot_nbr = 'map' + str(random.randint(6,10))
 gm = 'foot'
 gm_d = {
