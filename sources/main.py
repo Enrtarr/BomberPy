@@ -3,8 +3,8 @@ import random
 # from ursina import *
 import ursina as urs
 
-import splashscreen
-import loadingmenu
+# import splashscreen
+# import loadingmenu
 import bombe
 import mapnlevel as mapnlevel
 import pwup
