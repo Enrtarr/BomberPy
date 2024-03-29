@@ -24,7 +24,7 @@ if __name__ == '__main__':
 
 map_br_nbr = 'map' + str(random.randint(1,4))
 map_foot_nbr = 'map' + str(random.randint(6,10))
-gm = 'foot'
+gm = 'br'
 gm_d = {
     'br': {
         'map': {
