@@ -1,5 +1,5 @@
 # BombermanPy
-Une super recréation python de Bomberman par AA Games
+Une super recréation python de Bomberman par AA Games (nom du groupe)
 
 ## Protocole d'utilisation
 ___
