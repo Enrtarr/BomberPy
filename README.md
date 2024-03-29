@@ -1,5 +1,5 @@
-# Ultra-Bomberman
-A cool Bomberman recreation by AA Games
+# BombermanPy
+Une super recréation python de Bomberman par AA Games
 
 ## Protocole d'utilisation
 ___
