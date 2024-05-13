@@ -266,7 +266,6 @@ player4 = Player(name='P4',
                  sc='pink')
 joueurs.append(player4)
 
-
 mapnlevel.place_level(map1, murs_incassables, murs_cassables, murs_deco, murs_buts)
 if gm_d[gm]['map']['bonus']:
     mapnlevel.place_bonus(texture_list=map1,nbr_pwup=17,power_ups=power_ups)

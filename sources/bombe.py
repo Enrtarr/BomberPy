@@ -1,3 +1,4 @@
+import random
 import ursina as urs
 
 if __name__ == '__main__':
@@ -81,6 +82,11 @@ class Bomb(urs.Entity):
         bombe_g.parent = self.bombes
         bombe_h.parent = self.bombes
         bombe_b.parent = self.bombes
+
+        # on joue un bruit d'explosion
+        name = './audio/explo'+str(random.randint(1,10)) + '.mp3'
+        explosion = urs.Audio(name)
+        explosion.play()
 
         # on supprime les bombes (cause du bug, à modifier)
         for i in urs.scene.entities:
