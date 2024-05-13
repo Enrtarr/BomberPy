@@ -24,7 +24,7 @@ if __name__ == '__main__':
 
 map_br_nbr = 'map' + str(random.randint(1,4))
 map_foot_nbr = 'map' + str(random.randint(6,10))
-gm = 'br'
+gm = 'foot'
 gm_d = {
     'br': {
         'map': {
@@ -70,6 +70,7 @@ class Player(urs.Entity):
             - stunned : contient si le joueur est étourdi ou non
             - bombed : contient si le joueur a déjà une bombe placée
             - __anims : les animations du joueur"""
+        
         super().__init__() 
         # self.model = 'quad'
         self.scale_y = 2
@@ -119,6 +120,11 @@ class Player(urs.Entity):
         )
         self.__anims.parent = self
         self.__anims.play_animation('idle')
+        
+        self.__sounds = {
+            'walk': urs.Audio('./audio/footstep_'+gm_d[gm]['map']['sky']+'.mp3',loop=True),
+            'death': urs.Audio('./audio/death_'+sc+'.mp3')
+        }
 
         for key, value in kwargs.items(): 
             setattr(self, key, value) 
@@ -130,18 +136,28 @@ class Player(urs.Entity):
                 └> si l'animation est en pause, alors ça veut dire qu'elle ne se joue pas.
                     └> donc ça veut dire qu'on peut lancer une nouvelle animation."""
         if direction.x > 0:
+            if not self.__sounds['walk'].playing:
+                self.__sounds['walk'].play()
             if self.__anims.animations['walk_right'].paused:
                 self.__anims.play_animation('walk_right')
         elif direction.x < 0:
+            if not self.__sounds['walk'].playing:
+                self.__sounds['walk'].play()
             if self.__anims.animations['walk_left'].paused:
                 self.__anims.play_animation('walk_left')
         elif direction.y > 0:
+            if not self.__sounds['walk'].playing:
+                self.__sounds['walk'].play()
             if self.__anims.animations['walk_up'].paused:
                 self.__anims.play_animation('walk_up')
         elif direction.y < 0:
+            if not self.__sounds['walk'].playing:
+                self.__sounds['walk'].play()
             if self.__anims.animations['walk_down'].paused:
                 self.__anims.play_animation('walk_down')
         elif direction.x == 0 and direction.y == 0:
+            if self.__sounds['walk'].playing:
+                self.__sounds['walk'].stop()
             if self.__anims.animations['idle'].paused and self.__anims.animations['damage'].paused:
                 self.__anims.play_animation('idle')
     
@@ -212,6 +228,7 @@ class Player(urs.Entity):
             if self.lives == 0:
                 self.__anims.play_animation('death')
                 self.dead = True
+                self.__sounds['death'].play()
                 urs.invoke(setattr, self, 'rotation_x', 90, delay=1.9)
                 urs.invoke(setattr, self, 'z', 5, delay=1.9)
                 urs.invoke(self.__anims.play_animation, 'idle', delay=self.respawn_time)
