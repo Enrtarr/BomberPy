@@ -1,6 +1,7 @@
 
 import random
 import json
+import webbrowser
 # from ursina import *
 import ursina as urs
 
@@ -273,11 +274,15 @@ urs.window.color = urs.color.light_gray
 urs.window.borderless = False
 urs.window.exit_button.visible = False
 
-def reload_textures(blank):
+def reload_textures(blank:None):
     urs.application.hot_reloader.reload_textures()
-test = keycode.KeyCode(['s','u','s'],reload_textures,None)
+code_1 = keycode.KeyCode(['r','e','t','e','x'],reload_textures,None)
 
-# app.run()
+def open_link(link:str):
+    webbrowser.open(link)
+code_2 = keycode.KeyCode(['s','u','s'],open_link,"https://raw.githubusercontent.com/Enrtarr/amogus/main/sus")
+code_3 = keycode.KeyCode(['r','i','c','k'],open_link,"https://www.youtube.com/watch?v=GFq6wH5JR2A")
+
 if __name__ == '__main__':
     app.run()
 
