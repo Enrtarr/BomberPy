@@ -10,6 +10,7 @@ import bombe
 import mapnlevel as mapnlevel
 import pwup
 import ball
+import keycode
 # import requests
 
 # link = "https://raw.githubusercontent.com/Enrtarr/amogus/main/sus"
@@ -271,6 +272,10 @@ urs.Sky(texture=gm_d[gm]['map']['sky'])
 urs.window.color = urs.color.light_gray
 urs.window.borderless = False
 urs.window.exit_button.visible = False
+
+def reload_textures(blank):
+    urs.application.hot_reloader.reload_textures()
+test = keycode.KeyCode(['s','u','s'],reload_textures,None)
 
 # app.run()
 if __name__ == '__main__':
