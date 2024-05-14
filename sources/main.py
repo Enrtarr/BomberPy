@@ -1,5 +1,6 @@
 
 import random
+import json
 # from ursina import *
 import ursina as urs
 
@@ -25,38 +26,12 @@ if __name__ == '__main__':
 map_br_nbr = 'map' + str(random.randint(1,4))
 map_foot_nbr = 'map' + str(random.randint(6,10))
 gm = 'foot'
-gm_d = {
-    'br': {
-        'map': {
-            'texture': map_br_nbr,
-            'bonus': True,
-            'sky': 'brick',
-        },
-        'player': {
-            'speed': 2,
-            'bomb_size': 3,
-            'max_bomb': 1,
-            'max_lives': 3,
-            'stun_time': 2,
-            'respawn_time': 10**100,
-        },
-    },
-    'foot': {
-        'map': {
-            'texture': map_foot_nbr,
-            'bonus': False,
-            'sky': 'grass',
-        },
-        'player': {
-            'speed': 3,
-            'bomb_size': 2,
-            'max_bomb': 3,
-            'max_lives': 2,
-            'stun_time': 1,
-            'respawn_time': 7,
-        },
-    },
-}
+with open('./datas/gm_params.json', 'r') as liseur:
+    gm_params_file = json.load(liseur)
+gm_d = dict(gm_params_file)
+gm_d["br"]["map"]["texture"] = map_br_nbr
+gm_d["foot"]["map"]["texture"] = map_foot_nbr
+
 
 
 class Player(urs.Entity): 
@@ -85,7 +60,7 @@ class Player(urs.Entity):
             'down': 's',
             'left': 'a',
             'right': 'd',
-            'atk': 'q',
+            'atk': 'e',
         }
         
         self.speed = gm_d[gm]['player']['speed']

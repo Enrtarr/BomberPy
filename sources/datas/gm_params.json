@@ -1,0 +1,32 @@
+{
+    "br": {
+        "map": {
+            "texture": 1,
+            "bonus": true,
+            "sky": "brick"
+        },
+        "player": {
+            "speed": 2,
+            "bomb_size": 3,
+            "max_bomb": 1,
+            "max_lives": 3,
+            "stun_time": 2,
+            "respawn_time": 1E+100
+        }
+    },
+    "foot": {
+        "map": {
+            "texture": 6,
+            "bonus": false,
+            "sky": "grass"
+        },
+        "player": {
+            "speed": 3,
+            "bomb_size": 2,
+            "max_bomb": 3,
+            "max_lives": 2,
+            "stun_time": 1,
+            "respawn_time": 7
+        }
+    }
+}
